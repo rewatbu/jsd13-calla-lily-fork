@@ -3,7 +3,10 @@
 // - props: name, price, image, quantity และฟังก์ชัน
 //   onIncrease/onDecrease (เปลี่ยนจำนวน) + onRemove (ลบออก)
 // ============================================================
+import { Link } from "react-router-dom";
+
 const CartItem = ({
+  id,
   name,
   price,
   image,
@@ -18,7 +21,9 @@ const CartItem = ({
   return (
     <article className="flex items-center gap-5 w-full p-5 bg-white border border-[#E8BFB5] rounded-2xl shadow-[0_1px_3px_rgba(155,21,29,0.12)] hover:border-[#E8BFB5] hover:shadow-[0_6px_18px_rgba(155,21,29,0.18)] transition-all duration-150">
       <div className="h-[100px] w-[100px] flex-shrink-0 bg-[#FFE5DE] rounded-xl overflow-hidden">
+        <Link to={`/product/${id}`}>
         <img className="w-full h-full object-cover" src={image} alt={name} />
+        </Link>
       </div>
 
       <div className="flex-1 min-w-0">

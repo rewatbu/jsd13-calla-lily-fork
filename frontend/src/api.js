@@ -1,4 +1,13 @@
-const BASE = import.meta.env.VITE_API_URL || "/api";
+// BASE: จุดเชื่อม API ของ backend
+// - ใช้ VITE_API_URL ถ้ากำหนดไว้ (เช่น https://backend.onrender.com/api)
+// - ลบ "/" ที่เกินท้ายออก และเติม "/api" ให้อัตโนมัติถ้าเป็น URL เต็มที่ยังสิ้นสุดด้วยโฮสต์
+//   (กันกรณีตั้งค่า VITE_API_URL ไม่ถูก เช่น ลืม /api หรือใส่ "/" ต่อท้าย)
+const normalizeBase = (value) => {
+  const raw = (value || "/api").trim().replace(/\/+$/, "");
+  if (raw.startsWith("/")) return raw;
+  return raw.endsWith("/api") ? raw : `${raw}/api`;
+};
+const BASE = normalizeBase(import.meta.env.VITE_API_URL);
 const TOKEN_KEY = "calla-token";
 
 export function getToken() {

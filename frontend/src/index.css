@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap');
 
 :root {
   --color-primary: #9b151d;
@@ -18,4 +19,8 @@
   --shadow-md: 0 6px 18px rgba(155, 21, 29, 0.18);
 
   --transition-fast: 150ms ease;
+}
+
+*{
+  font-family: "Roboto Slab", serif;
 }

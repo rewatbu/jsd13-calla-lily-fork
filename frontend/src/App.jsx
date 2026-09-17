@@ -34,8 +34,8 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     errorElement: (
-      <div className="min-h-screen bg-[#FFE5DE] flex items-center justify-center p-8">
-        <p className="text-lg font-bold text-[#9B151D]">Page not found</p>
+      <div className="min-h-screen bg-background flex items-center justify-center p-8">
+        <p className="text-lg font-bold text-primary">Page not found</p>
       </div>
     ),
     children: [

@@ -14,7 +14,7 @@ const STEPS = ["Processing", "Shipped", "Delivered"];
 const STEP_INDEX = { Processing: 0, Shipped: 1, Delivered: 2 };
 
 const inputClass =
-  "flex-1 border border-[#E8BFB5] rounded-lg px-4 py-3 bg-white text-[#3A2B25] focus:outline-none focus:border-[#9B151D] focus:ring-2 focus:ring-[#9B151D]/15";
+  "flex-1 border border-border rounded-lg px-4 py-3 bg-surface text-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15";
 
 export default function Tracking() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -55,8 +55,8 @@ export default function Tracking() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 md:p-10">
-      <h1 className="text-3xl font-bold text-[#3A2B25] mb-2">Track Order</h1>
-      <p className="text-[#9A6A5E] mb-6">
+      <h1 className="text-3xl font-bold text-foreground mb-2">Track Order</h1>
+      <p className="text-muted-foreground mb-6">
         Enter your order ID (e.g. CL-123456) or the email you ordered with.
       </p>
 
@@ -71,9 +71,9 @@ export default function Tracking() {
       </form>
 
       {notFound && (
-        <div className="bg-white rounded-2xl border border-[#E8BFB5] p-8 text-center shadow-md">
-          <p className="font-semibold text-[#3A2B25]">Order not found</p>
-          <p className="text-[#9A6A5E] mt-1 text-sm">
+        <div className="bg-surface rounded-2xl border border-border p-8 text-center shadow-md">
+          <p className="font-semibold text-foreground">Order not found</p>
+          <p className="text-muted-foreground mt-1 text-sm">
             We couldn't find &quot;{orderId}&quot;. Check the ID on your receipt
             or in My Account.
           </p>
@@ -81,12 +81,12 @@ export default function Tracking() {
       )}
 
       {!order && !notFound && (
-        <div className="bg-white rounded-2xl border border-[#E8BFB5] p-8 text-center shadow-md">
-          <p className="text-[#9A6A5E]">
+        <div className="bg-surface rounded-2xl border border-border p-8 text-center shadow-md">
+          <p className="text-muted-foreground">
             Your order status will appear here. You can find your order ID in{" "}
             <Link
               to="/account"
-              className="font-semibold text-[#9B151D] hover:underline"
+              className="font-semibold text-primary hover:underline"
             >
               My Account
             </Link>
@@ -97,14 +97,14 @@ export default function Tracking() {
 
       {order && (
         <>
-          <div className="bg-white rounded-2xl border border-[#E8BFB5] p-6 shadow-md mb-6">
+          <div className="bg-surface rounded-2xl border border-border p-6 shadow-md mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
               <div>
-                <p className="font-bold text-[#3A2B25]">
+                <p className="font-bold text-foreground">
                   Order ID:{" "}
-                  <span className="text-[#9B151D]">{order.id}</span>
+                  <span className="text-primary">{order.id}</span>
                 </p>
-                <p className="text-sm text-[#9A6A5E]">
+                <p className="text-sm text-muted-foreground">
                   {new Date(order.date).toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "short",
@@ -112,7 +112,7 @@ export default function Tracking() {
                   })}
                 </p>
               </div>
-              <span className="text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full bg-[#FFE5DE] text-[#9B151D] w-fit">
+              <span className="text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full bg-background text-primary w-fit">
                 {order.status || "Processing"}
               </span>
             </div>
@@ -124,15 +124,15 @@ export default function Tracking() {
                     <div
                       className={`h-10 w-10 rounded-full flex items-center justify-center font-bold ${
                         i <= currentStep
-                          ? "bg-[#9B151D] text-white"
-                          : "bg-white border-2 border-[#E8BFB5] text-[#9A6A5E]"
+                          ? "bg-primary text-surface"
+                          : "bg-surface border-2 border-border text-muted-foreground"
                       }`}
                     >
                       {i < currentStep ? "✓" : i + 1}
                     </div>
                     <span
                       className={`text-sm font-semibold ${
-                        i <= currentStep ? "text-[#9B151D]" : "text-[#9A6A5E]"
+                        i <= currentStep ? "text-primary" : "text-muted-foreground"
                       }`}
                     >
                       {step}
@@ -141,7 +141,7 @@ export default function Tracking() {
                   {i < STEPS.length - 1 && (
                     <div
                       className={`flex-1 h-1 mx-2 mb-6 rounded ${
-                        i < currentStep ? "bg-[#9B151D]" : "bg-[#E8BFB5]"
+                        i < currentStep ? "bg-primary" : "bg-border"
                       }`}
                     />
                   )}
@@ -150,8 +150,8 @@ export default function Tracking() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#E8BFB5] p-6 shadow-md">
-            <h2 className="text-lg font-bold text-[#3A2B25] mb-4">
+          <div className="bg-surface rounded-2xl border border-border p-6 shadow-md">
+            <h2 className="text-lg font-bold text-foreground mb-4">
               Order summary
             </h2>
             <ul className="flex flex-col gap-3">
@@ -163,22 +163,22 @@ export default function Tracking() {
                     className="h-12 w-12 rounded object-cover"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-[#3A2B25] truncate">
+                    <p className="text-sm font-semibold text-foreground truncate">
                       {item.name}
                     </p>
-                    <p className="text-xs text-[#9A6A5E]">
+                    <p className="text-xs text-muted-foreground">
                       ฿{item.price.toFixed(2)} × {item.quantity}
                     </p>
                   </div>
-                  <span className="text-sm font-bold text-[#3A2B25]">
+                  <span className="text-sm font-bold text-foreground">
                     ฿{(item.price * item.quantity).toFixed(2)}
                   </span>
                 </li>
               ))}
             </ul>
-            <div className="flex justify-between pt-3 mt-4 border-t border-[#E8BFB5] font-bold text-[#3A2B25]">
+            <div className="flex justify-between pt-3 mt-4 border-t border-border font-bold text-foreground">
               <span>Total</span>
-              <span className="text-[#9B151D]">฿{order.total.toFixed(2)}</span>
+              <span className="text-primary">฿{order.total.toFixed(2)}</span>
             </div>
           </div>
         </>

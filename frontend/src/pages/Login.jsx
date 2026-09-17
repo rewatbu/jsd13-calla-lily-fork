@@ -9,8 +9,8 @@ import Button from "../components/Button";
 import { useAuth } from "../context/AuthContext";
 
 const inputClass =
-  "w-full border border-[#E8BFB5] rounded-lg px-4 py-3 bg-white text-[#3A2B25] focus:outline-none focus:border-[#9B151D] focus:ring-2 focus:ring-[#9B151D]/15";
-const labelClass = "block text-sm font-semibold text-[#3A2B25] mb-1";
+  "w-full border border-border rounded-lg px-4 py-3 bg-surface text-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15";
+const labelClass = "block text-sm font-semibold text-foreground mb-1";
 
 export default function Login() {
   const { login } = useAuth();
@@ -37,12 +37,12 @@ export default function Login() {
 
   return (
     <div className="max-w-md mx-auto p-6 md:p-10">
-      <div className="bg-white rounded-2xl border border-[#E8BFB5] p-8 shadow-md">
-        <h1 className="text-2xl font-bold text-[#3A2B25] mb-1">Welcome back</h1>
-        <p className="text-[#9A6A5E] mb-6">Log in to your account</p>
+      <div className="bg-surface rounded-2xl border border-border p-8 shadow-md">
+        <h1 className="text-2xl font-bold text-foreground mb-1">Welcome back</h1>
+        <p className="text-muted-foreground mb-6">Log in to your account</p>
 
         {error && (
-          <p className="bg-[#FFE5DE] text-[#9B151D] rounded-lg px-4 py-3 mb-5 text-sm font-semibold">
+          <p className="bg-background text-primary rounded-lg px-4 py-3 mb-5 text-sm font-semibold">
             {error}
           </p>
         )}
@@ -81,9 +81,9 @@ export default function Login() {
           <Button name="Log In" type="submit" className="w-full mt-2" />
         </form>
 
-        <p className="mt-5 text-center text-sm text-[#9A6A5E]">
+        <p className="mt-5 text-center text-sm text-muted-foreground">
           Don't have an account?{" "}
-          <Link to="/register" className="font-semibold text-[#9B151D] hover:underline">
+          <Link to="/register" className="font-semibold text-primary hover:underline">
             Register
           </Link>
         </p>

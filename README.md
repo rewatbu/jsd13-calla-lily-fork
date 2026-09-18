@@ -68,6 +68,7 @@
 
 ## จุดที่ยังต้องพัฒนาปรับปรุง
 
+- **ไม่มี Cart database** - ไม่มีฐานข้อมูลสำหรับตะกร้าสินค้า ทำให้ไม่ผู้ใช้งานไม่สามารถเก็บจัดเก็บตะกร้าสินค้าไปใช้งานเมื่อเข้าระบบจากอุปกรณ์อื่นได้ 
 - **ไม่มี Testing** — ยังไม่มี test files หรือ test runner และ backend test script เป็น placeholder
 - **ไม่มี TypeScript** — ใช้ JavaScript ล้วน ทำให้พลาด type-related bug ได้ง่าย
 - **ความปลอดภัย/Validation** — ควรเพิ่ม rate limiting, validation ฝั่ง backend ที่รัดกุมขึ้น และไม่ควรเชื่อ client

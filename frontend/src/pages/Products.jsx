@@ -13,10 +13,10 @@ import { useProducts } from "../context/ProductContext";
 const PAGE_SIZE = 9;
 
 const selectClass =
-  "border border-[#E8BFB5] rounded-lg px-4 py-2 bg-white text-[#3A2B25] focus:outline-none focus:border-[#9B151D]";
+  "border border-border rounded-lg px-4 py-2 bg-surface text-foreground focus:outline-none focus:border-primary";
 
 const pageBtnClass =
-  "px-5 py-2 rounded-lg border border-[#E8BFB5] bg-white text-[#9B151D] font-semibold hover:bg-[#9B151D] hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-300";
+  "px-5 py-2 rounded-lg border border-border bg-surface text-primary font-semibold hover:bg-primary hover:text-surface disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-300";
 
 export default function Product() {
   const { addToCart } = useCart();
@@ -92,8 +92,8 @@ export default function Product() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-10">
-      <h1 className="text-3xl font-bold text-[#3A2B25] mb-2">All Products</h1>
-      <p className="text-[#9A6A5E] mb-6">
+      <h1 className="text-3xl font-bold text-foreground mb-2">All Products</h1>
+      <p className="text-muted-foreground mb-6">
         {filtered.length} item{filtered.length !== 1 ? "s" : ""}
         {category !== "all" && ` in ${category}`}
       </p>
@@ -108,7 +108,7 @@ export default function Product() {
             setSearch(e.target.value);
             resetToFirstPage();
           }}
-          className="border border-[#E8BFB5] rounded-lg px-4 py-2 flex-1 bg-white focus:outline-none focus:border-[#9B151D]"
+          className="border border-border rounded-lg px-4 py-2 flex-1 bg-surface focus:outline-none focus:border-primary"
         />
 
         <select
@@ -155,11 +155,11 @@ export default function Product() {
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#E8BFB5] p-10 text-center">
-          <p className="text-lg font-semibold text-[#3A2B25]">
+        <div className="bg-surface rounded-xl border border-border p-10 text-center">
+          <p className="text-lg font-semibold text-foreground">
             No products found
           </p>
-          <p className="text-[#9A6A5E] mt-1">
+          <p className="text-muted-foreground mt-1">
             Try a different search term or category.
           </p>
         </div>
@@ -176,7 +176,7 @@ export default function Product() {
           >
             ← Previous
           </button>
-          <span className="font-semibold text-[#3A2B25]">
+          <span className="font-semibold text-foreground">
             Page {page} of {pageCount}
           </span>
           <button

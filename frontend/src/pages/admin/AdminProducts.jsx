@@ -8,8 +8,8 @@ import { useProducts } from "../../context/ProductContext";
 import Button from "../../components/Button";
 
 const inputClass =
-  "w-full border border-[#E8BFB5] rounded-lg px-4 py-2 bg-white text-[#3A2B25] focus:outline-none focus:border-[#9B151D] focus:ring-2 focus:ring-[#9B151D]/15";
-const labelClass = "block text-sm font-semibold text-[#3A2B25] mb-1";
+  "w-full border border-border rounded-lg px-4 py-2 bg-surface text-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15";
+const labelClass = "block text-sm font-semibold text-foreground mb-1";
 
 // ฟอร์มว่างเปล่า (ค่าเริ่มต้นของสินค้าใหม่)
 const blankForm = {
@@ -97,8 +97,8 @@ export default function AdminProducts() {
         <p
           className={`rounded-lg px-4 py-3 text-sm font-semibold ${
             message.type === "error"
-              ? "bg-red-100 text-red-800"
-              : "bg-green-100 text-green-800"
+              ? "bg-danger-soft text-danger"
+              : "bg-success-soft text-success-strong"
           }`}
         >
           {message.text}
@@ -106,16 +106,16 @@ export default function AdminProducts() {
       )}
 
       {/* Add / edit form */}
-      <div className="bg-white rounded-2xl border border-[#E8BFB5] shadow-md p-6">
+      <div className="bg-surface rounded-2xl border border-border shadow-md p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-[#3A2B25]">
+          <h2 className="text-lg font-bold text-foreground">
             {editingId ? "Edit Product" : "Add New Product"}
           </h2>
           {editingId && (
             <button
               type="button"
               onClick={startAdd}
-              className="text-sm font-semibold text-[#9B151D] hover:underline cursor-pointer"
+              className="text-sm font-semibold text-primary hover:underline cursor-pointer"
             >
               Cancel edit
             </button>
@@ -219,14 +219,14 @@ export default function AdminProducts() {
       </div>
 
       {/* Products table */}
-      <div className="bg-white rounded-2xl border border-[#E8BFB5] shadow-md p-6">
-        <h2 className="text-lg font-bold text-[#3A2B25] mb-4">
+      <div className="bg-surface rounded-2xl border border-border shadow-md p-6">
+        <h2 className="text-lg font-bold text-foreground mb-4">
           All Products ({products.length})
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-[#9A6A5E] border-b border-[#E8BFB5]">
+              <tr className="text-left text-muted-foreground border-b border-border">
                 <th className="py-2 pr-4 font-semibold">Product</th>
                 <th className="py-2 pr-4 font-semibold">Category</th>
                 <th className="py-2 pr-4 font-semibold">Price</th>
@@ -236,7 +236,7 @@ export default function AdminProducts() {
             </thead>
             <tbody>
               {products.map((p) => (
-                <tr key={p.id} className="border-b border-[#FFE5DE]">
+                <tr key={p.id} className="border-b border-background">
                   <td className="py-3 pr-4">
                     <div className="flex items-center gap-3">
                       <img
@@ -244,29 +244,29 @@ export default function AdminProducts() {
                         alt={p.name}
                         className="h-12 w-12 rounded object-cover"
                       />
-                      <span className="font-semibold text-[#3A2B25]">
+                      <span className="font-semibold text-foreground">
                         {p.name}
                       </span>
                     </div>
                   </td>
-                  <td className="py-3 pr-4 text-[#9A6A5E]">{p.category}</td>
-                  <td className="py-3 pr-4 font-semibold text-[#3A2B25]">
+                  <td className="py-3 pr-4 text-muted-foreground">{p.category}</td>
+                  <td className="py-3 pr-4 font-semibold text-foreground">
                     ฿{p.price.toFixed(2)}
                   </td>
-                  <td className="py-3 pr-4 text-[#3A2B25]">{p.stock}</td>
+                  <td className="py-3 pr-4 text-foreground">{p.stock}</td>
                   <td className="py-3">
                     <div className="flex gap-2">
                       <button
                         type="button"
                         onClick={() => startEdit(p)}
-                        className="px-3 py-1 rounded-lg border border-[#9B151D] text-[#9B151D] font-semibold text-xs hover:bg-[#9B151D]/10 transition-colors cursor-pointer"
+                        className="px-3 py-1 rounded-lg border border-primary text-primary font-semibold text-xs hover:bg-primary/10 transition-colors cursor-pointer"
                       >
                         Edit
                       </button>
                       <button
                         type="button"
                         onClick={() => handleDelete(p)}
-                        className="px-3 py-1 rounded-lg border border-[#9B151D] bg-[#9B151D] text-white font-semibold text-xs hover:bg-[#7A1016] transition-colors cursor-pointer"
+                        className="px-3 py-1 rounded-lg border border-primary bg-primary text-surface font-semibold text-xs hover:bg-primary-hover transition-colors cursor-pointer"
                       >
                         Delete
                       </button>
@@ -276,7 +276,7 @@ export default function AdminProducts() {
               ))}
               {products.length === 0 && (
                 <tr>
-                  <td colSpan="5" className="py-8 text-center text-[#9A6A5E]">
+                  <td colSpan="5" className="py-8 text-center text-muted-foreground">
                     No products yet.
                   </td>
                 </tr>

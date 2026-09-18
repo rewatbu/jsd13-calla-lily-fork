@@ -1,22 +1,37 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap');
 
-:root {
-  --color-primary: #9b151d;
-  --color-primary-dark: #7a1016;
-  --color-blush: #ffe5de;
-  --color-rose: #e8bfb5;
+/*
+ * Calla Lily color system
+ *
+ * Warm, editorial surfaces inspired by the semantic-token approach in
+ * DESIGN.md. These tokens intentionally power color utilities only; type,
+ * spacing, responsive behavior, and layout remain defined where they are.
+ */
+@theme {
+  --color-background: #ffe5de;
   --color-surface: #ffffff;
+  --color-primary: #9b151d;
+  --color-primary-hover: #7a1016;
   --color-border: #e8bfb5;
-  --color-text: #3a2b25;
-  --color-text-muted: #9a6a5e;
+  --color-foreground: #3a2b25;
+  --color-muted-foreground: #9a6a5e;
 
+  --color-success: #15803d;
+  --color-success-strong: #166534;
+  --color-success-soft: #dcfce7;
+  --color-danger: #991b1b;
+  --color-danger-soft: #fee2e2;
+
+  --shadow-brand-sm: 0 1px 3px rgb(155 21 29 / 0.12);
+  --shadow-brand-md: 0 6px 18px rgb(155 21 29 / 0.18);
+  --shadow-button-hover: 0 5px 14px rgb(155 21 29 / 0.22);
+}
+
+:root {
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-
-  --shadow-sm: 0 1px 3px rgba(155, 21, 29, 0.12);
-  --shadow-md: 0 6px 18px rgba(155, 21, 29, 0.18);
 
   --transition-fast: 150ms ease;
 }

@@ -55,6 +55,7 @@
 | `POST /api/orders` | สร้างออเดอร์ (ตรวจและตัดสต็อก) |
 | `GET /api/orders` `mine` `track` `:id` | ดูออเดอร์ (แอดมิน / ของตนเอง / ติดตาม) |
 | `PATCH /api/orders/:id` | อัปเดตสถานะออเดอร์ (แอดมิน) |
+| `POST /api/chat` | ส่งข้อความไปยัง Calla AI (Gemini ผ่าน Google AI Studio) |
 
 มี seed script (`npm run seed`) สำหรับเพิ่มสินค้า 12 รายการและผู้ใช้ตัวอย่าง และ `npm run data:destroy` สำหรับล้างข้อมูล
 
@@ -93,5 +94,16 @@ cp .env.example .env   # ตั้งค่า VITE_API_URL
 npm install
 npm run dev            # Vite dev server (proxy /api ไปที่ backend)
 ```
+
+## AI Chat (Google AI Studio)
+
+สร้าง API key ใน [Google AI Studio](https://aistudio.google.com/app/apikey) แล้วใส่ค่านั้นใน `backend/.env`:
+
+```env
+GEMINI_API_KEY=your-key
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+หน้าเว็บจะมีปุ่ม **AI ช่วยแนะนำ** ลอยที่มุมขวาล่าง และเรียก backend ที่ `POST /api/chat` เท่านั้น จึงไม่ส่ง API key ไปยัง browser
 
 คำสั่งที่มีให้: frontend `npm run dev | build | lint | preview`, backend `npm run dev | start | seed | data:destroy`

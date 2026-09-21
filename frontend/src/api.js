@@ -80,6 +80,7 @@ export const api = {
   getOrder: (id) => request(`/orders/${id}`),
   createOrder: (data) => request("/orders", { method: "POST", body: data }),
   updateOrderStatus: (id, status) => request(`/orders/${id}`, { method: "PATCH", body: { status } }),
+  chat: (messages) => request("/chat", { method: "POST", body: { messages } }),
 };
 
 export const sortOrdersNewest = (orders) =>

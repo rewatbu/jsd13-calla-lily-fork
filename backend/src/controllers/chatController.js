@@ -1,16 +1,28 @@
+import Product from '../models/Product.js';
+
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 const DEFAULT_MODEL = 'gemini-2.5-flash';
 const MAX_HISTORY_MESSAGES = 16;
 const MAX_MESSAGE_LENGTH = 2000;
 
-const systemInstruction = {
+const catalogLine = (product) => {
+  const description = String(product.description || '').replace(/\s+/g, ' ').trim();
+  const availability = product.stock > 0 ? 'พร้อมจำหน่าย' : 'สินค้าหมด';
+  return `- ${product.name} | ${product.category} | ${product.price} บาท | ${availability}${
+    description ? ` | ${description}` : ''
+  }`;
+};
+
+const buildSystemInstruction = (products) => ({
   parts: [
     {
-      text:
-        'คุณคือ Calla AI ผู้ช่วยของร้าน Calla Lily ตอบลูกค้าด้วยภาษาไทยที่สุภาพ กระชับ และเป็นกันเอง ช่วยแนะนำสินค้าดูแลผิว วิธีใช้ และขั้นตอนสั่งซื้อได้ หากไม่ทราบข้อมูลเฉพาะของร้าน ให้บอกตรง ๆ และแนะนำให้ตรวจสอบกับร้าน ห้ามแต่งข้อมูลเรื่องราคา สต็อก โปรโมชั่น หรือสถานะคำสั่งซื้อ',
+      text: `คุณคือ Calla AI ผู้ช่วยของร้าน Calla Lily ตอบลูกค้าด้วยภาษาไทยที่สุภาพ กระชับ และเป็นกันเอง ช่วยแนะนำสินค้าดูแลผิว วิธีใช้ และขั้นตอนสั่งซื้อได้ ใช้ข้อมูลสินค้าในรายการด้านล่างเป็นแหล่งข้อมูลเดียวสำหรับชื่อสินค้า ราคา หมวด และสถานะพร้อมจำหน่าย ห้ามแต่งข้อมูลเรื่องสินค้า ราคา สต็อก โปรโมชั่น หรือสถานะคำสั่งซื้อ หากไม่มีข้อมูลที่ต้องการ ให้บอกตรง ๆ และแนะนำให้ตรวจสอบกับร้าน
+
+ข้อมูลสินค้าปัจจุบัน:
+${products.length ? products.map(catalogLine).join('\n') : '- ไม่พบข้อมูลสินค้าในขณะนี้'}`,
     },
   ],
-};
+});
 
 const getClientMessages = (messages) => {
   if (!Array.isArray(messages)) return [];
@@ -54,6 +66,8 @@ const chat = async (req, res) => {
   const timeout = setTimeout(() => controller.abort(), 25_000);
 
   try {
+    // Read only the fields the assistant needs. This does not update products or stock.
+    const products = await Product.find({}).select('name price category description stock').lean();
     const model = process.env.GEMINI_MODEL || DEFAULT_MODEL;
     const response = await fetch(`${GEMINI_API_URL}/${model}:generateContent`, {
       method: 'POST',
@@ -63,7 +77,7 @@ const chat = async (req, res) => {
       },
       signal: controller.signal,
       body: JSON.stringify({
-        systemInstruction,
+        systemInstruction: buildSystemInstruction(products),
         contents,
         generationConfig: { temperature: 0.5, maxOutputTokens: 700 },
       }),

@@ -5,11 +5,11 @@
 import { Link } from "react-router-dom";
 
 const linkClass =
-  "text-[#E8BFB5] hover:text-white transition-colors duration-300";
+  "text-border hover:text-surface transition-colors duration-300";
 
 export default function Footer() {
   return (
-    <footer className="flex flex-col w-full h-52 overflow-hidden bg-[#9B151D] text-white">
+    <footer className="flex flex-col w-full h-52 overflow-hidden bg-primary text-surface">
       <div className="container-top flex flex-row justify-between flex-1">
         <div className="flex flex-col p-5">
           <h3 className="font-semibold mb-2">Shop</h3>
@@ -43,9 +43,9 @@ export default function Footer() {
         </div>
         <div className="flex flex-col p-5">
           <h3 className="font-semibold mb-2">Contact Us</h3>
-          <p className="text-[#E8BFB5]">Email: hello@callalily.com</p>
-          <p className="text-[#E8BFB5]">Phone: 02-123-4567</p>
-          <p className="text-[#E8BFB5]">Bangkok, Thailand</p>
+          <p className="text-border">Email: hello@callalily.com</p>
+          <p className="text-border">Phone: 02-123-4567</p>
+          <p className="text-border">Bangkok, Thailand</p>
         </div>
       </div>
       <div className="container-butom mt-auto self-center m-4">

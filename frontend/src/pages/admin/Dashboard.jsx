@@ -10,9 +10,9 @@ import { api, sortOrdersNewest } from "../../api";
 
 // สีป้ายสถานะออเดอร์ (ใช้ร่วมกับหน้า Admin Orders)
 const statusStyles = {
-  Processing: "bg-[#FFE5DE] text-[#9B151D]",
-  Shipped: "bg-[#E8BFB5] text-[#7A1016]",
-  Delivered: "bg-green-100 text-green-800",
+  Processing: "bg-background text-primary",
+  Shipped: "bg-border text-primary-hover",
+  Delivered: "bg-success-soft text-success-strong",
 };
 
 // อ่านออเดอร์ทั้งหมดจาก MongoDB (ใช้ใน Dashboard)
@@ -40,7 +40,7 @@ function useUsers() {
 }
 
 const cardClass =
-  "bg-white rounded-2xl border border-[#E8BFB5] shadow-md p-6";
+  "bg-surface rounded-2xl border border-border shadow-md p-6";
 
 export default function Dashboard() {
   const { products } = useProducts();
@@ -68,10 +68,10 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s) => (
           <div key={s.label} className={cardClass}>
-            <p className="text-sm font-semibold text-[#9A6A5E]">{s.label}</p>
-            <p className="text-2xl font-bold text-[#3A2B25] mt-1">{s.value}</p>
+            <p className="text-sm font-semibold text-muted-foreground">{s.label}</p>
+            <p className="text-2xl font-bold text-foreground mt-1">{s.value}</p>
             {s.note && (
-              <p className="text-xs text-[#9B151D] mt-1 font-semibold">
+              <p className="text-xs text-primary mt-1 font-semibold">
                 {s.note}
               </p>
             )}
@@ -81,21 +81,21 @@ export default function Dashboard() {
 
       <div className={cardClass}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-[#3A2B25]">Recent Orders</h2>
+          <h2 className="text-lg font-bold text-foreground">Recent Orders</h2>
           <Link
             to="/admin/orders"
-            className="text-sm font-semibold text-[#9B151D] hover:underline"
+            className="text-sm font-semibold text-primary hover:underline"
           >
             View all →
           </Link>
         </div>
         {recent.length === 0 ? (
-          <p className="text-[#9A6A5E]">No orders yet.</p>
+          <p className="text-muted-foreground">No orders yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[#9A6A5E] border-b border-[#E8BFB5]">
+                <tr className="text-left text-muted-foreground border-b border-border">
                   <th className="py-2 pr-4 font-semibold">Order</th>
                   <th className="py-2 pr-4 font-semibold">Customer</th>
                   <th className="py-2 pr-4 font-semibold">Total</th>
@@ -104,14 +104,14 @@ export default function Dashboard() {
               </thead>
               <tbody>
                 {recent.map((o) => (
-                  <tr key={o.id} className="border-b border-[#FFE5DE]">
-                    <td className="py-3 pr-4 font-semibold text-[#9B151D]">
+                  <tr key={o.id} className="border-b border-background">
+                    <td className="py-3 pr-4 font-semibold text-primary">
                       {o.id}
                     </td>
-                    <td className="py-3 pr-4 text-[#3A2B25]">
+                    <td className="py-3 pr-4 text-foreground">
                       {o.customer?.fullName || "—"}
                     </td>
-                    <td className="py-3 pr-4 font-semibold text-[#3A2B25]">
+                    <td className="py-3 pr-4 font-semibold text-foreground">
                       ฿{(o.total || 0).toFixed(2)}
                     </td>
                     <td className="py-3">

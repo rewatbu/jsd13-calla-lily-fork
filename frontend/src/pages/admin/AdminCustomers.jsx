@@ -17,14 +17,14 @@ export default function AdminCustomers() {
   }, []);
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E8BFB5] shadow-md p-6">
-      <h2 className="text-lg font-bold text-[#3A2B25] mb-4">
+    <div className="bg-surface rounded-2xl border border-border shadow-md p-6">
+      <h2 className="text-lg font-bold text-foreground mb-4">
         All Customers ({users.length})
       </h2>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-[#9A6A5E] border-b border-[#E8BFB5]">
+            <tr className="text-left text-muted-foreground border-b border-border">
               <th className="py-2 pr-4 font-semibold">Name</th>
               <th className="py-2 pr-4 font-semibold">Email</th>
               <th className="py-2 pr-4 font-semibold">Phone</th>
@@ -40,24 +40,24 @@ export default function AdminCustomers() {
               });
               const isAdmin = u.role === "admin";
               return (
-                <tr key={u.id} className="border-b border-[#FFE5DE]">
-                  <td className="py-3 pr-4 font-semibold text-[#3A2B25]">
+                <tr key={u.id} className="border-b border-background">
+                  <td className="py-3 pr-4 font-semibold text-foreground">
                     {u.name}
                   </td>
-                  <td className="py-3 pr-4 text-[#9A6A5E]">{u.email}</td>
-                  <td className="py-3 pr-4 text-[#3A2B25]">{u.phone}</td>
+                  <td className="py-3 pr-4 text-muted-foreground">{u.email}</td>
+                  <td className="py-3 pr-4 text-foreground">{u.phone}</td>
                   <td className="py-3 pr-4">
                     <span
                       className={`text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide ${
                         isAdmin
-                          ? "bg-[#9B151D] text-white"
-                          : "bg-[#FFE5DE] text-[#9B151D]"
+                          ? "bg-primary text-surface"
+                          : "bg-background text-primary"
                       }`}
                     >
                       {u.role}
                     </span>
                   </td>
-                  <td className="py-3 text-[#9A6A5E]">{date}</td>
+                  <td className="py-3 text-muted-foreground">{date}</td>
                 </tr>
               );
             })}

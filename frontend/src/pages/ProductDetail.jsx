@@ -24,8 +24,8 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <div className="max-w-6xl mx-auto p-10 text-center">
-        <p className="text-xl font-bold text-[#9B151D]">Product not found</p>
-        <Link to="/product" className="mt-4 inline-block font-semibold text-[#9B151D] hover:underline">
+        <p className="text-xl font-bold text-primary">Product not found</p>
+        <Link to="/product" className="mt-4 inline-block font-semibold text-primary hover:underline">
           ← Back to products
         </Link>
       </div>
@@ -65,7 +65,7 @@ export default function ProductDetail() {
     <div className="max-w-6xl mx-auto p-6 md:p-10">
       <button
         onClick={() => navigate(-1)}
-        className="font-semibold text-[#9B151D] hover:underline mb-6 cursor-pointer"
+        className="font-semibold text-primary hover:underline mb-6 cursor-pointer"
       >
         ← Back
       </button>
@@ -80,37 +80,37 @@ export default function ProductDetail() {
         </div>
 
         <div className="flex flex-col">
-          <span className="text-sm uppercase tracking-widest text-[#9B151D]/70 font-semibold">
+          <span className="text-sm uppercase tracking-widest text-primary/70 font-semibold">
             {product.category}
           </span>
-          <h1 className="text-3xl md:text-4xl font-bold text-[#3A2B25] mt-2 leading-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mt-2 leading-tight">
             {product.name}
           </h1>
-          <p className="text-2xl font-bold text-[#9B151D] mt-3">
+          <p className="text-2xl font-bold text-primary mt-3">
             ฿{product.price.toFixed(2)}
           </p>
-          <p className="mt-4 text-[#9A6A5E] leading-relaxed">
+          <p className="mt-4 text-muted-foreground leading-relaxed">
             {product.description}
           </p>
 
           <p className="mt-4 text-sm">
             {product.stock > 0 ? (
-              <span className="text-green-700 font-semibold">
+              <span className="text-success font-semibold">
                 ● In stock ({product.stock} left)
               </span>
             ) : (
-              <span className="text-[#9B151D] font-semibold">● Out of stock</span>
+              <span className="text-primary font-semibold">● Out of stock</span>
             )}
           </p>
 
           <div className="mt-6 flex items-center gap-4">
-            <div className="flex items-center h-11 border border-[#E8BFB5] bg-[#FFE5DE] rounded-lg overflow-hidden">
+            <div className="flex items-center h-11 border border-border bg-background rounded-lg overflow-hidden">
               <button
                 type="button"
                 onClick={() =>
                   setQty((q) => Math.max(1, (Math.floor(Number(q)) || 1) - 1))
                 }
-                className="w-11 h-11 text-lg font-bold text-[#9B151D] hover:bg-[#9B151D] hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
+                className="w-11 h-11 text-lg font-bold text-primary hover:bg-primary hover:text-surface disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
               >
                 −
               </button>
@@ -124,7 +124,7 @@ export default function ProductDetail() {
                   if (qty === "") setQty(1);
                 }}
                 aria-label="Quantity"
-                className="w-16 text-center font-bold text-[#3A2B25] bg-transparent focus:outline-none"
+                className="w-16 text-center font-bold text-foreground bg-transparent focus:outline-none"
               />
               <button
                 type="button"
@@ -136,7 +136,7 @@ export default function ProductDetail() {
                     )
                   )
                 }
-                className="w-11 h-11 text-lg font-bold text-[#9B151D] hover:bg-[#9B151D] hover:text-white transition-colors duration-200"
+                className="w-11 h-11 text-lg font-bold text-primary hover:bg-primary hover:text-surface transition-colors duration-200"
               >
                 +
               </button>
@@ -149,7 +149,7 @@ export default function ProductDetail() {
           </div>
 
           {added && (
-            <p className="mt-3 font-semibold text-green-700">
+            <p className="mt-3 font-semibold text-success">
               ✓ Added to your cart
             </p>
           )}
@@ -158,7 +158,7 @@ export default function ProductDetail() {
 
       {related.length > 0 && (
         <section className="mt-16">
-          <h2 className="text-2xl font-bold text-[#3A2B25] mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-6">
             You may also like
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -10,9 +10,9 @@ import { api, sortOrdersNewest } from "../../api";
 
 // สีป้ายสถานะตามขั้นตอนการจัดส่ง
 const statusStyles = {
-  Processing: "bg-[#FFE5DE] text-[#9B151D]",
-  Shipped: "bg-[#E8BFB5] text-[#7A1016]",
-  Delivered: "bg-green-100 text-green-800",
+  Processing: "bg-background text-primary",
+  Shipped: "bg-border text-primary-hover",
+  Delivered: "bg-success-soft text-success-strong",
 };
 
 const STATUSES = ["Processing", "Shipped", "Delivered"];
@@ -41,12 +41,12 @@ export default function AdminOrders() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="bg-white rounded-2xl border border-[#E8BFB5] shadow-md p-6">
-        <h2 className="text-lg font-bold text-[#3A2B25] mb-4">
+      <div className="bg-surface rounded-2xl border border-border shadow-md p-6">
+        <h2 className="text-lg font-bold text-foreground mb-4">
           All Orders ({orders.length})
         </h2>
         {orders.length === 0 ? (
-          <p className="text-[#9A6A5E]">No orders placed yet.</p>
+          <p className="text-muted-foreground">No orders placed yet.</p>
         ) : (
           <div className="flex flex-col gap-4">
             {orders.map((order) => {
@@ -60,18 +60,18 @@ export default function AdminOrders() {
               return (
                 <article
                   key={order.id}
-                  className="border border-[#FFE5DE] rounded-xl p-5"
+                  className="border border-background rounded-xl p-5"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-[#3A2B25]">
-                        <span className="text-[#9B151D]">{order.id}</span>
+                      <p className="font-semibold text-foreground">
+                        <span className="text-primary">{order.id}</span>
                       </p>
-                      <p className="text-sm text-[#9A6A5E]">
+                      <p className="text-sm text-muted-foreground">
                         {order.customer?.fullName || "—"} ·{" "}
                         {order.customer?.email || "—"} · {date}
                       </p>
-                      <p className="text-sm font-semibold text-[#3A2B25] mt-1">
+                      <p className="text-sm font-semibold text-foreground mt-1">
                         ฿{(order.total || 0).toFixed(2)} · {items} item
                         {items !== 1 ? "s" : ""}
                       </p>
@@ -87,7 +87,7 @@ export default function AdminOrders() {
                       <select
                         value={order.status || "Processing"}
                         onChange={(e) => updateStatus(order.id, e.target.value)}
-                        className="border border-[#E8BFB5] rounded-lg px-3 py-1.5 text-sm bg-white text-[#3A2B25] focus:outline-none focus:border-[#9B151D]"
+                        className="border border-border rounded-lg px-3 py-1.5 text-sm bg-surface text-foreground focus:outline-none focus:border-primary"
                       >
                         {STATUSES.map((s) => (
                           <option key={s} value={s}>
@@ -97,7 +97,7 @@ export default function AdminOrders() {
                       </select>
                       <Link
                         to={`/tracking?id=${order.id}`}
-                        className="text-xs font-semibold text-[#9B151D] hover:underline"
+                        className="text-xs font-semibold text-primary hover:underline"
                       >
                         Track →
                       </Link>

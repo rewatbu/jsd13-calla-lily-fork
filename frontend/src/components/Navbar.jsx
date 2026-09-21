@@ -12,14 +12,14 @@ export default function Navbar() {
   const { currentUser, logout } = useAuth();
 
   const navLinkClass =
-    "px-3 sm:px-6 h-full flex items-center font-semibold text-[#9B151D] hover:bg-[#9B151D]/10 transition-colors duration-300";
+    "px-3 sm:px-6 h-full flex items-center font-semibold text-primary hover:bg-primary/10 transition-colors duration-300";
 
   return (
-    <div className="flex w-full h-16 bg-white justify-between items-center sticky top-0 z-50 shadow-md">
+    <div className="flex w-full h-16 bg-surface justify-between items-center sticky top-0 z-50 shadow-md">
       <div className="flex items-center h-full">
         <Link
           to="/"
-          className="p-4 font-bold text-lg tracking-wide text-[#9B151D]"
+          className="p-4 font-bold text-lg tracking-wide text-primary"
         >
           Calla Lily
         </Link>
@@ -38,13 +38,13 @@ export default function Navbar() {
       <div className="flex items-center h-full">
         {currentUser && (
           <>
-            <span className="hidden sm:inline text-sm font-semibold text-[#9B151D] mr-2">
+            <span className="hidden sm:inline text-sm font-semibold text-primary mr-2">
               Hi, {currentUser.name.split(" ")[0]}
             </span>
             <button
               type="button"
               onClick={logout}
-              className="h-11 px-3 flex items-center rounded-lg text-sm font-semibold text-[#9B151D] hover:bg-[#9B151D]/10 transition-colors duration-300 cursor-pointer"
+              className="h-11 px-3 flex items-center rounded-lg text-sm font-semibold text-primary hover:bg-primary/10 transition-colors duration-300 cursor-pointer"
             >
               Logout
             </button>
@@ -53,7 +53,7 @@ export default function Navbar() {
         <Link
           to={currentUser ? "/account" : "/login"}
           aria-label="My Account"
-          className="h-11 w-11 flex items-center justify-center rounded-lg text-[#9B151D] hover:bg-[#9B151D]/10 transition-colors duration-300"
+          className="h-11 w-11 flex items-center justify-center rounded-lg text-primary hover:bg-primary/10 transition-colors duration-300"
         >
           <svg
             className="h-6 w-6"
@@ -72,7 +72,7 @@ export default function Navbar() {
         <Link
           to="/cart"
           aria-label="Shopping cart"
-          className="relative mr-3 sm:mr-6 h-11 w-11 flex items-center justify-center rounded-lg text-[#9B151D] hover:bg-[#9B151D]/10 transition-colors duration-300"
+          className="relative mr-3 sm:mr-6 h-11 w-11 flex items-center justify-center rounded-lg text-primary hover:bg-primary/10 transition-colors duration-300"
         >
         <svg
           className="h-6 w-6"
@@ -88,7 +88,7 @@ export default function Navbar() {
           />
         </svg>
         {itemCount > 0 && (
-          <span className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-[#9B151D] text-white text-xs font-bold flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-primary text-surface text-xs font-bold flex items-center justify-center">
             {itemCount}
           </span>
         )}

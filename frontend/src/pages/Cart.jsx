@@ -24,10 +24,10 @@ export default function Cart() {
   if (cart.length === 0) {
     return (
       <div className="max-w-6xl mx-auto p-10 text-center">
-        <h1 className="text-3xl font-bold text-[#3A2B25] mb-4">
+        <h1 className="text-3xl font-bold text-foreground mb-4">
           Your cart is empty
         </h1>
-        <p className="text-[#9A6A5E] mb-8">
+        <p className="text-muted-foreground mb-8">
           Browse our handmade collection and find something you love.
         </p>
         <Link to="/product">
@@ -39,10 +39,10 @@ export default function Cart() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-10">
-      <h1 className="text-3xl font-bold text-[#3A2B25] mb-2">
+      <h1 className="text-3xl font-bold text-foreground mb-2">
         Shopping Cart
       </h1>
-      <p className="text-[#9A6A5E] mb-8">
+      <p className="text-muted-foreground mb-8">
         {itemCount} item{itemCount !== 1 ? "s" : ""} in your cart
       </p>
 
@@ -51,6 +51,7 @@ export default function Cart() {
           {cart.map((item) => (
             <CartItem
               key={item.id}
+              id={item.id}
               name={item.name}
               price={item.price}
               image={item.image}
@@ -64,23 +65,23 @@ export default function Cart() {
 
 
           {/* ส่วนนี้คือ order summary */}
-        <aside className="bg-white border border-[#E8BFB5] rounded-xl p-6 h-fit shadow-md">
-          <h2 className="text-xl font-bold text-[#3A2B25] mb-4">Summary</h2>
-          <div className="flex justify-between py-2 text-[#9A6A5E]">
+        <aside className="bg-surface border border-border rounded-xl p-6 h-fit shadow-md">
+          <h2 className="text-xl font-bold text-foreground mb-4">Summary</h2>
+          <div className="flex justify-between py-2 text-muted-foreground">
             <span>Subtotal</span>
-            <span className="font-semibold text-[#3A2B25]">
+            <span className="font-semibold text-foreground">
               ฿{totalPrice.toFixed(2)}
             </span>
           </div>
-          <div className="flex justify-between py-2 text-[#9A6A5E]">
+          <div className="flex justify-between py-2 text-muted-foreground">
             <span>Shipping</span>
-            <span className="font-semibold text-green-700">
+            <span className="font-semibold text-success">
               {SHIPPING === 0 ? "Free" : `฿${SHIPPING.toFixed(2)}`}
             </span>
           </div>
-          <div className="flex justify-between py-3 border-t border-[#E8BFB5] mt-2">
-            <span className="font-bold text-[#3A2B25]">Total</span>
-            <span className="font-bold text-[#9B151D]">
+          <div className="flex justify-between py-3 border-t border-border mt-2">
+            <span className="font-bold text-foreground">Total</span>
+            <span className="font-bold text-primary">
               ฿{(totalPrice + SHIPPING).toFixed(2)}
             </span>
           </div>
@@ -89,7 +90,7 @@ export default function Cart() {
           </Link>
           <Link
             to="/product"
-            className="block mt-3 text-center font-semibold text-[#9B151D] hover:underline"
+            className="block mt-3 text-center font-semibold text-primary hover:underline"
           >
             Continue shopping
           </Link>

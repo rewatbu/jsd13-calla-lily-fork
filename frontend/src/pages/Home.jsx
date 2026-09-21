@@ -19,16 +19,16 @@ export default function Home() {
     <div>
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-6 py-12 md:py-16">
-        <div className="bg-white rounded-3xl shadow-md overflow-hidden flex flex-col md:flex-row">
+        <div className="bg-surface rounded-3xl shadow-md overflow-hidden flex flex-col md:flex-row">
           <div className="p-8 md:p-12 flex-1 flex flex-col justify-center">
-            <p className="text-sm uppercase tracking-widest text-[#9B151D]/70 font-semibold mb-3">
+            <p className="text-sm uppercase tracking-widest text-primary/70 font-semibold mb-3">
               Handmade Bath &amp; Body
             </p>
-            <h1 className="text-4xl md:text-5xl font-bold text-[#3A2B25] leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
               Small-batch soaps for slow,{" "}
-              <span className="text-[#9B151D]">calming days</span>
+              <span className="text-primary">calming days</span>
             </h1>
-            <p className="mt-4 text-[#9A6A5E] max-w-lg text-lg">
+            <p className="mt-4 text-muted-foreground max-w-lg text-lg">
               Naturally crafted bars, mists, and creams inspired by the peace of
               a quiet bath at the end of the day.
             </p>
@@ -38,7 +38,7 @@ export default function Home() {
               </Link>
               <Link
                 to="/product?cat=Relaxation"
-                className="inline-flex items-center justify-center min-h-11 px-5 py-3 rounded-lg border-2 border-[#9B151D] text-[#9B151D] font-semibold text-[15px] hover:bg-[#9B151D]/10 transition-colors duration-300"
+                className="inline-flex items-center justify-center min-h-11 px-5 py-3 rounded-lg border-2 border-primary text-primary font-semibold text-[15px] hover:bg-primary/10 transition-colors duration-300"
               >
                 Explore Relaxation
               </Link>
@@ -57,10 +57,10 @@ export default function Home() {
       {/* Featured */}
       <section className="max-w-6xl mx-auto px-6 py-10">
         <div className="flex items-end justify-between mb-6">
-          <h2 className="text-2xl font-bold text-[#3A2B25]">Featured Products</h2>
+          <h2 className="text-2xl font-bold text-foreground">Featured Products</h2>
           <Link
             to="/product"
-            className="font-semibold text-[#9B151D] hover:underline"
+            className="font-semibold text-primary hover:underline"
           >
             View all →
           </Link>

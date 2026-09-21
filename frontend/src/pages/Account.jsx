@@ -12,14 +12,14 @@ import { api, sortOrdersNewest } from "../api";
 
 // สีสไตล์ของแต่ละสถานะออเดอร์ (ใช้แสดงป้ายในประวัติออเดอร์)
 const statusStyles = {
-  Processing: "bg-[#FFE5DE] text-[#9B151D]",
-  Shipped: "bg-[#E8BFB5] text-[#7A1016]",
-  Delivered: "bg-green-100 text-green-800",
+  Processing: "bg-background text-primary",
+  Shipped: "bg-border text-primary-hover",
+  Delivered: "bg-success-soft text-success-strong",
 };
 
 const inputClass =
-  "w-full border border-[#E8BFB5] rounded-lg px-4 py-3 bg-white text-[#3A2B25] focus:outline-none focus:border-[#9B151D] focus:ring-2 focus:ring-[#9B151D]/15";
-const labelClass = "block text-sm font-semibold text-[#3A2B25] mb-1";
+  "w-full border border-border rounded-lg px-4 py-3 bg-surface text-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15";
+const labelClass = "block text-sm font-semibold text-foreground mb-1";
 
 export default function Account() {
   const { currentUser, logout, updateProfile, changePassword } = useAuth();
@@ -51,8 +51,8 @@ export default function Account() {
   if (!currentUser) {
     return (
       <div className="max-w-4xl mx-auto p-10 text-center">
-        <h1 className="text-3xl font-bold text-[#3A2B25] mb-4">My Account</h1>
-        <p className="text-[#9A6A5E] mb-8">
+        <h1 className="text-3xl font-bold text-foreground mb-4">My Account</h1>
+        <p className="text-muted-foreground mb-8">
           Log in to view your profile and order history.
         </p>
         <div className="flex justify-center gap-4">
@@ -140,56 +140,56 @@ export default function Account() {
   const msgClass = (msg) =>
     `rounded-lg px-4 py-3 mb-4 text-sm font-semibold ${
       msg.type === "success"
-        ? "bg-green-100 text-green-800"
-        : "bg-[#FFE5DE] text-[#9B151D]"
+        ? "bg-success-soft text-success-strong"
+        : "bg-background text-primary"
     }`;
 
   return (
     <div className="max-w-4xl mx-auto p-6 md:p-10">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-[#3A2B25]">My Account</h1>
+        <h1 className="text-3xl font-bold text-foreground">My Account</h1>
         <button
           type="button"
           onClick={() => {
             logout();
             navigate("/");
           }}
-          className="font-semibold text-[#9B151D] hover:underline cursor-pointer"
+          className="font-semibold text-primary hover:underline cursor-pointer"
         >
           Logout
         </button>
       </div>
 
       {/* Profile card */}
-      <div className="bg-white rounded-2xl border border-[#E8BFB5] p-6 shadow-md flex flex-col sm:flex-row sm:items-center gap-6">
-        <div className="h-20 w-20 rounded-full bg-[#9B151D] text-white flex items-center justify-center text-2xl font-bold flex-shrink-0">
+      <div className="bg-surface rounded-2xl border border-border p-6 shadow-md flex flex-col sm:flex-row sm:items-center gap-6">
+        <div className="h-20 w-20 rounded-full bg-primary text-surface flex items-center justify-center text-2xl font-bold flex-shrink-0">
           {initials}
         </div>
         <div className="flex-1 min-w-0">
-          <h2 className="text-xl font-bold text-[#3A2B25]">{currentUser.name}</h2>
-          <p className="text-[#9A6A5E]">{currentUser.email}</p>
-          <p className="text-[#9A6A5E]">{currentUser.phone}</p>
+          <h2 className="text-xl font-bold text-foreground">{currentUser.name}</h2>
+          <p className="text-muted-foreground">{currentUser.email}</p>
+          <p className="text-muted-foreground">{currentUser.phone}</p>
         </div>
         <div className="sm:text-right">
-          <p className="text-sm text-[#9A6A5E]">Member since</p>
-          <p className="font-semibold text-[#3A2B25]">{memberSince}</p>
-          <span className="inline-block mt-1 text-xs font-semibold uppercase tracking-wide bg-[#FFE5DE] text-[#9B151D] px-3 py-1 rounded-full">
+          <p className="text-sm text-muted-foreground">Member since</p>
+          <p className="font-semibold text-foreground">{memberSince}</p>
+          <span className="inline-block mt-1 text-xs font-semibold uppercase tracking-wide bg-background text-primary px-3 py-1 rounded-full">
             {currentUser.role}
           </span>
         </div>
       </div>
 
       {/* Contact & Shipping Address */}
-      <div className="bg-white rounded-2xl border border-[#E8BFB5] p-6 shadow-md mt-6">
+      <div className="bg-surface rounded-2xl border border-border p-6 shadow-md mt-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-[#3A2B25]">
+          <h3 className="font-bold text-foreground">
             Contact &amp; Shipping Address
           </h3>
           {!editingProfile && (
             <button
               type="button"
               onClick={startEditProfile}
-              className="text-sm font-semibold text-[#9B151D] hover:underline cursor-pointer"
+              className="text-sm font-semibold text-primary hover:underline cursor-pointer"
             >
               Edit
             </button>
@@ -284,15 +284,15 @@ export default function Account() {
               <button
                 type="button"
                 onClick={cancelEditProfile}
-                className="inline-flex items-center justify-center min-h-11 px-5 py-3 rounded-xl border-2 border-[#9B151D] text-[#9B151D] font-semibold hover:bg-[#9B151D]/10 transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center min-h-11 px-5 py-3 rounded-xl border-2 border-primary text-primary font-semibold hover:bg-primary/10 transition-colors cursor-pointer"
               >
                 Cancel
               </button>
             </div>
           </form>
         ) : (
-          <div className="text-[#9A6A5E]">
-            <p className="font-medium text-[#3A2B25]">
+          <div className="text-muted-foreground">
+            <p className="font-medium text-foreground">
               {currentUser.name} · {currentUser.email}
             </p>
             <p>{currentUser.phone}</p>
@@ -305,9 +305,9 @@ export default function Account() {
       </div>
 
       {/* Change Password */}
-      <div className="bg-white rounded-2xl border border-[#E8BFB5] p-6 shadow-md mt-6">
-        <h3 className="font-bold text-[#3A2B25] mb-4">Change Password</h3>
-        <p className="text-sm text-[#9A6A5E] -mt-2 mb-4">
+      <div className="bg-surface rounded-2xl border border-border p-6 shadow-md mt-6">
+        <h3 className="font-bold text-foreground mb-4">Change Password</h3>
+        <p className="text-sm text-muted-foreground -mt-2 mb-4">
           Password must be 8-14 characters.
         </p>
 
@@ -367,12 +367,12 @@ export default function Account() {
 
       {/* Order history */}
       <section className="mt-8">
-        <h2 className="text-2xl font-bold text-[#3A2B25] mb-4">
+        <h2 className="text-2xl font-bold text-foreground mb-4">
           Order History
         </h2>
         {orders.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-[#E8BFB5] p-10 text-center">
-            <p className="font-semibold text-[#3A2B25] mb-6">No orders yet</p>
+          <div className="bg-surface rounded-2xl border border-border p-10 text-center">
+            <p className="font-semibold text-foreground mb-6">No orders yet</p>
             <Link to="/product">
               <Button name="Start Shopping" />
             </Link>
@@ -391,18 +391,18 @@ export default function Account() {
               return (
                 <li
                   key={order.id}
-                  className="bg-white rounded-2xl border border-[#E8BFB5] p-6 shadow-md"
+                  className="bg-surface rounded-2xl border border-border p-6 shadow-md"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                     <div>
-                      <p className="font-semibold text-[#3A2B25]">
+                      <p className="font-semibold text-foreground">
                         Order ID:{" "}
-                        <span className="text-[#9B151D]">{order.id}</span>
+                        <span className="text-primary">{order.id}</span>
                       </p>
-                      <p className="text-sm text-[#9A6A5E]">{date}</p>
+                      <p className="text-sm text-muted-foreground">{date}</p>
                       <Link
                         to={`/tracking?id=${order.id}`}
-                        className="text-xs font-semibold text-[#9B151D] hover:underline"
+                        className="text-xs font-semibold text-primary hover:underline"
                       >
                         Track →
                       </Link>
@@ -423,25 +423,25 @@ export default function Account() {
                           className="h-12 w-12 rounded object-cover"
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-[#3A2B25] truncate">
+                          <p className="text-sm font-semibold text-foreground truncate">
                             {item.name}
                           </p>
-                          <p className="text-xs text-[#9A6A5E]">
+                          <p className="text-xs text-muted-foreground">
                             ฿{item.price.toFixed(2)} × {item.quantity}
                           </p>
                         </div>
-                        <span className="text-sm font-bold text-[#3A2B25]">
+                        <span className="text-sm font-bold text-foreground">
                           ฿{(item.price * item.quantity).toFixed(2)}
                         </span>
                       </li>
                     ))}
                   </ul>
 
-                  <div className="flex justify-between pt-3 mt-4 border-t border-[#E8BFB5] font-bold text-[#3A2B25]">
+                  <div className="flex justify-between pt-3 mt-4 border-t border-border font-bold text-foreground">
                     <span>
                       {items} item{items !== 1 ? "s" : ""}
                     </span>
-                    <span className="text-[#9B151D]">
+                    <span className="text-primary">
                       ฿{order.total.toFixed(2)}
                     </span>
                   </div>

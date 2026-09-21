@@ -25,7 +25,7 @@ export default function AdminLayout() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-10">
-      <h1 className="text-3xl font-bold text-[#3A2B25] mb-6">
+      <h1 className="text-3xl font-bold text-foreground mb-6">
         Admin Panel
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 items-start">
@@ -38,8 +38,8 @@ export default function AdminLayout() {
               className={({ isActive }) =>
                 `px-4 py-2 rounded-xl font-semibold text-sm transition-colors duration-200 ${
                   isActive
-                    ? "bg-[#9B151D] text-white"
-                    : "bg-white text-[#9B151D] border border-[#E8BFB5] hover:bg-[#9B151D]/10"
+                    ? "bg-primary text-surface"
+                    : "bg-surface text-primary border border-border hover:bg-primary/10"
                 }`
               }
             >

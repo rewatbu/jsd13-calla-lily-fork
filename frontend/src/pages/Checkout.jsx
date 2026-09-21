@@ -28,7 +28,7 @@ export default function Checkout() {
     address: currentUser?.address || "",
     city: currentUser?.city || "",
     zip: currentUser?.zip || "",
-    payment: "stripe",
+    payment: "COD",
   });
   const [error, setError] = useState(null);
 
@@ -226,7 +226,6 @@ export default function Checkout() {
                 onChange={handleChange}
                 className={inputClass}
               >
-                <option value="stripe">Stripe Payment</option>
                 <option value="COD">Cash on Delivery</option>
                 <option value="transfer">Bank Transfer</option>
                 <option value="card">Credit / Debit Card</option>

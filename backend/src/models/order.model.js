@@ -64,6 +64,11 @@ const orderSchema = new mongoose.Schema(
       default: "COD",
     },
 
+    stripeSessionId: {
+      type: String,
+      default: null,
+    },
+
     shippingAddress: {
       name: String,
       address: String,

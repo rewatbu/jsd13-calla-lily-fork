@@ -1,6 +1,9 @@
 import Order from '../models/order.model.js';
 import Product from '../models/Product.js';
 import mongoose from 'mongoose';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const readStatus = (status) => {
   if (!status) return 'Processing';
@@ -96,12 +99,52 @@ const getOrderById = async (req, res) => {
 
 const createOrder = async (req, res) => {
   try {
-    const { items, customer, payment, subtotal, shipping, discount, total, orderId } = req.body;
+    const { items, payment, subtotal, shipping, discount, total, orderId, sessionId } = req.body;
+    let customer = req.body.customer;
 
     if (!items || !items.length) {
       res.status(400).json({ message: 'Your cart is empty' });
       return;
     }
+
+    // ถ้าเป็นการชำระด้วย Stripe ให้เช็คก่อนว่าออเดอร์นี้ถูกสร้างไปแล้วหรือยัง
+    // (กันซ้ำตอน user รีเฟรชหน้า payment-success)
+    let stripeSession = null;
+    if (sessionId) {
+      const existing = await Order.findOne({ stripeSessionId: sessionId });
+      if (existing) {
+        res.json(toOrderJSON(existing));
+        return;
+      }
+      try {
+        stripeSession = await stripe.checkout.sessions.retrieve(sessionId);
+      } catch {
+        res.status(400).json({ message: 'Payment session could not be verified' });
+        return;
+      }
+      if (stripeSession.payment_status !== 'paid') {
+        res.status(400).json({ message: 'Payment has not been completed' });
+        return;
+      }
+      if (
+        stripeSession.amount_total != null &&
+        Math.round(Number(total || 0) * 100) !== stripeSession.amount_total
+      ) {
+        res.status(400).json({ message: 'Order total does not match the paid amount' });
+        return;
+      }
+    }
+
+    // ข้อมูลจัดส่งมาจาก Stripe session (สิ่งที่ user พิมพ์ตอน checkout) ถ้ามี
+    if (stripeSession) {
+      try {
+        const savedCustomer = JSON.parse(stripeSession.metadata?.shipping);
+        if (savedCustomer) customer = savedCustomer;
+      } catch {
+        // ใช้ customer จาก request body ถ้าอ่าน metadata ไม่ได้
+      }
+    }
+
     if (!customer || !customer.fullName || !customer.email) {
       res.status(400).json({ message: 'Shipping details are required' });
       return;
@@ -141,7 +184,8 @@ const createOrder = async (req, res) => {
       userId: req.user.id,
       items: orderItems,
       customer,
-      payment,
+      payment: sessionId ? 'card' : payment,
+      stripeSessionId: sessionId || null,
       subtotal,
       shipping,
       discount,

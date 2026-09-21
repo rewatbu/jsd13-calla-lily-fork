@@ -80,13 +80,13 @@ calla-lily-fullstack-1/
 - ระบุ script: `dev` (รัน dev server), `build` (สร้างไฟล์ production),
   `lint` (ตรวจโค้ด), `preview` (ทดสอบ build)
 - dependencies หลัก: `react`, `react-dom`, `react-router-dom`
-  (จัดการหน้า/เส้นทาง), `tailwindcss` (ออกแบบ UI)
+  (จัดการหน้า/เส้นทาง), `tailwindcss` + `@tailwindcss/vite` (ออกแบบ UI)
 - โปรเจกต์ใช้ `"type": "module"` หมายถึงใช้ `import` แบบ ES Module
 
 ### `vite.config.js`
 ค่าตั้งค่าของ Vite (ตัว build):
-- `react()` + `reactCompilerPreset()` — ใช้ React 19 รุ่นใหม่พร้อม
-  React Compiler ที่ช่วย optimize การ re-render อัตโนมัติ
+- `react()` + `babel({ presets: [reactCompilerPreset()] })` — ใช้ React 19
+  รุ่นใหม่พร้อม React Compiler ที่ช่วย optimize การ re-render อัตโนมัติ
 - `tailwindcss()` — เปิดใช้งาน Tailwind CSS เวอร์ชัน 4
 - `server.proxy` — เฉพาะตอน develop: คำขอที่ขึ้นต้น `/api` จะส่งต่อไปที่
   `http://localhost:5000` (backend ตัว local) ทำให้ dev ไม่ต้องตั้ง URL
@@ -583,5 +583,5 @@ export Hook `useXxx()` ที่ใช้เรียกจากหน้าไ
 
 ---
 
-*เอกสารนี้เขียนจากโค้ดจริงในโปรเจกต์ (อัปเดตล่าสุดตาม commit
-`f4ef0d4` — แก้ api.js ให้ normalize BASE URL)*
+*เอกสารนี้เขียนจากโค้ดจริงในโปรเจกต์ (อัปเดตล่าสุดตามโค้ดปัจจุบัน —
+  แก้คำอธิบาย `vite.config.js` / `package.json` ให้ตรงกับโค้ดจริง)*

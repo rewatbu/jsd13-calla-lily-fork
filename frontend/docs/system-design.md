@@ -1,28 +1,32 @@
 # System Design — Calla Lily E-commerce
 
-> เอกสารอธิบายสถาปัตยกรรม โครงสร้าง และแผนพัฒนาของโปรเจกต์
-> ครอบคลุมทั้งเฟสปัจจุบัน (Frontend-only) และเฟสอนาคต (Backend)
+> เอกสารอธิบายสถาปัตยกรรม โครงสร้าง และฟีเจอร์ของโปรเจกต์
+> ปัจจุบันเป็น Full-stack: React SPA + Node.js/Express + MongoDB
 
 ---
 
 ## 1. สถาปัตยกรรมภาพรวม
 
-โปรเจกต์แบ่งพัฒนาเป็น 2 เฟส ตาม backlog:
+โปรเจกต์เป็น Full-stack E-commerce:
 
-- **เฟสปัจจุบัน = Frontend-only (SPA)**
-  - ข้อมูลสินค้ามาจากไฟล์ local `src/data/product.js`
-  - ระบบ cart จำลองด้วย `localStorage` ของเบราว์เซอร์ (ยังไม่มีฐานข้อมูล)
-- **เฟสอนาคต = Full-stack**
-  - เพิ่ม Node.js + Express (REST API)
-  - เพิ่ม MongoDB ใช้เก็บ Product / User / Order
+- **Frontend** = React SPA (Vite + Tailwind CSS)
+  - ข้อมูลสินค้าโหลดจาก backend ผ่าน REST API
+  - ระบบ cart ใช้ `localStorage` ของเบราว์เซอร์ (sync กับ server ตอน checkout)
+- **Backend** = Node.js + Express + MongoDB
+  - REST API สำหรับ Product / User / Order
+  - JWT authentication + bcrypt password hashing
 
 ```
 [React SPA (Vite + Tailwind)]
    │
-   ├── ข้อมูล local: src/data/product.js   → ตอนนี้ยังไม่มี API
-   ├── localStorage: cart                  → จำลอง persistent state
+   ├── fetch() ผ่าน src/api.js
    │
-   [อนาคต] REST API (Express) ←→ MongoDB
+   ▼
+[REST API (Express)] ←→ [MongoDB]
+   │
+   ├── /api/products   → Product CRUD
+   ├── /api/users      → Auth + User management
+   └── /api/orders     → Order creation + tracking
 ```
 
 ---
@@ -36,203 +40,261 @@
 | Styling | Tailwind CSS 4 |
 | Routing | React Router 7 |
 | Lint | ESLint 10 |
-| Backend (อนาคต) | Node.js + Express |
-| Database (อนาคต) | MongoDB |
+| Backend | Node.js + Express 5 |
+| Database | MongoDB (Mongoose 9) |
+| Auth | JWT (jsonwebtoken) + bcrypt |
 
 ---
 
 ## 3. โครงสร้างโฟลเดอร์
 
-### ปัจจุบัน
+### Frontend (`frontend/src/`)
 
 ```
 src/
-├── main.jsx          → Entry point (render <App/>)
-├── App.jsx           → Router (Routes)
-├── index.css         → Tailwind import
-├── data/
-│   └── product.js    → ข้อมูลสินค้า (ชั่วคราว)
-├── components/       → UI ที่ใช้ซ้ำ
-│   ├── Layout.jsx    → Navbar + Outlet + Footer
-│   ├── Navbar.jsx    → แถบนำทาง (sticky)
-│   ├── Footer.jsx
-│   ├── ProductCard.jsx
-│   ├── Button.jsx
-│   └── CartItem.jsx
-└── pages/
-    ├── Home.jsx
-    └── Products.jsx
-```
-
-### เป้าหมาย (เต็มรูปแบบ)
-
-```
-src/
-├── main.jsx                    # Entry + ครอบ <CartProvider>
-├── App.jsx                     # Router
-├── index.css                   # Tailwind + :root (CSS variables)
-├── data/product.js             # ข้อมูลสินค้า (ชั่วคราว)
+├── main.jsx              → Entry point (<App/> ใน StrictMode)
+├── App.jsx               → Router (createBrowserRouter) + Provider nesting
+├── api.js                → REST API client (fetch wrapper + JWT token)
+├── index.css             → Tailwind import + CSS variables
+├── assets/               → hero.png, svg logos
 ├── context/
-│   ├── CartContext.jsx         # (วางแผน) — Toto
-│   └── AuthContext.jsx         # (วางแผน) — Black
+│   ├── AuthContext.jsx   → ระบบบัญชี (login/register/logout/profile)
+│   ├── CartContext.jsx   → ตะกร้าสินค้า (localStorage)
+│   └── ProductContext.jsx→ สินค้าทั้งหมด (โหลดจาก API)
 ├── components/
-│   ├── Layout / Navbar / Footer
-│   ├── ProductCard / Button / CartItem
-│   └── (เพิ่ม) ProtectedRoute, AdminLayout, ...
-└── pages/
-    ├── public/  : Home, Products, ProductDetail, Cart, Checkout, OrderSuccess
-    ├── auth/    : Login, Register
-    ├── user/    : Account, OrderHistory, OrderTracking
-    └── admin/   : Dashboard, ProductsCRUD, Orders, Customers
+│   ├── Layout.jsx        → Navbar + Outlet + Footer
+│   ├── Navbar.jsx        → แถบนำทาง (sticky) + cart badge
+│   ├── Footer.jsx        → footer 3 คอลัมน์
+│   ├── Button.jsx        → ปุ่มมาตรฐาน
+│   ├── ProductCard.jsx   → การ์ดสินค้า (ใช้ใน Home/Products/Detail)
+│   └── CartItem.jsx      → รายการสินค้าในตะกร้า
+├── pages/
+│   ├── Home.jsx          → หน้าแรก (Hero + Featured)
+│   ├── Products.jsx      → รายการสินค้า (ค้นหา/กรอง/เรียง/pagination)
+│   ├── ProductDetail.jsx → รายละเอียดสินค้า (/product/:id)
+│   ├── Cart.jsx          → ตะกร้าสินค้า
+│   ├── Checkout.jsx      → ชำระเงิน
+│   ├── OrderSuccess.jsx  → หน้ายืนยันคำสั่งซื้อ
+│   ├── Login.jsx         → เข้าสู่ระบบ
+│   ├── Register.jsx      → สมัครสมาชิก
+│   ├── Account.jsx       → บัญชีผู้ใช้ + ประวัติออเดอร์
+│   └── Tracking.jsx      → เช็คสถานะพัสดุ
+├── pages/admin/
+│   ├── AdminLayout.jsx   → Guard + Sidebar
+│   ├── Dashboard.jsx     → สถิติ
+│   ├── AdminProducts.jsx → CRUD สินค้า
+│   ├── AdminOrders.jsx   → จัดการออเดอร์
+│   └── AdminCustomers.jsx→ รายชื่อลูกค้า
+└── data/
+    ├── products.js       → ข้อมูลสินค้าตั้งต้น (seed → MongoDB)
+    ├── admin.js          → บัญชี admin ตั้งต้น
+    └── user.js           → บัญชีลูกค้าตั้งต้น
+```
+
+### Backend (`backend/src/`)
+
+```
+src/
+├── server.js             → จุดเริ่มต้นเซิร์ฟเวอร์ (Express + CORS + routes)
+├── config/db.js          → เชื่อมต่อ MongoDB (mongoose)
+├── seed.js               → สคริปต์เติมข้อมูลตั้งต้น
+├── models/
+│   ├── Product.js        → Schema สินค้า
+│   ├── User.js           → Schema ผู้ใช้ (password hash)
+│   └── order.model.js    → Schema ออเดอร์
+├── controllers/
+│   ├── productController.js → ลอจิก CRUD สินค้า
+│   ├── userController.js    → ลอจิก auth + จัดการผู้ใช้
+│   └── orderController.js   → ลอจิกสร้าง/ดู/อัปเดตออเดอร์
+├── routes/
+│   ├── productsRoute.js  → /api/products
+│   ├── userRoute.js      → /api/users
+│   └── orderRoute.js     → /api/orders
+└── middlewares/
+    └── authMiddleware.js → JWT verify + requireAdmin
 ```
 
 ---
 
 ## 4. Routing Map
 
-> หมายเหตุ: แนะนำให้ใช้ตัวพิมพ์เล็ก เช่น `/products` แทน `/Product`
+> เส้นทางทั้งหมดใช้ตัวพิมพ์เล็ก (เช่น `/product` ไม่ใช่ `/Product`)
 
-| Path | หน้า / ฟังก์ชัน | เจ้าของ (ทีม) |
-|------|----------------|---------------|
-| `/` | Home | Black |
-| `/products` | แสดง/ค้นหา/กรอง/เรียงสินค้า | Phupha |
-| `/product/:id` | สินค้ารายละเอียด | Phupha |
-| `/cart` | ตะกร้าสินค้า | Toto |
-| `/checkout` | ชำระเงิน | Toto |
-| `/login`, `/register` | เข้าสู่ระบบ/สมัคร | Black |
-| `/account` | บัญชีผู้ใช้ | Bush |
-| `/tracking` | ติดตามคำสั่งซื้อ | Bush |
-| `/admin/*` | หน้าแอดมิน | Phupha |
+| Path | หน้า / ฟังก์ชัน |
+|------|----------------|
+| `/` | Home (Hero + Featured Products) |
+| `/product` | รายการสินค้า (ค้นหา/กรอง/เรียง/pagination) |
+| `/product/:id` | รายละเอียดสินค้า |
+| `/cart` | ตะกร้าสินค้า |
+| `/checkout` | ชำระเงิน (ต้องล็อกอิน + มีสินค้าในตะกร้า) |
+| `/order-success` | หน้ายืนยันคำสั่งซื้อ |
+| `/login` | เข้าสู่ระบบ |
+| `/register` | สมัครสมาชิก |
+| `/account` | บัญชีผู้ใช้ + ประวัติออเดอร์ |
+| `/tracking` | เช็คสถานะพัสดุ |
+| `/admin` | Dashboard (admin เท่านั้น) |
+| `/admin/products` | จัดการสินค้า CRUD (admin) |
+| `/admin/orders` | จัดการออเดอร์ (admin) |
+| `/admin/customers` | รายชื่อลูกค้า (admin) |
 
 ---
 
 ## 5. State Management (Context)
 
-### CartContext — ระบบตะกร้า (Toto)
+### CartContext — ระบบตะกร้า
 
 ```
 CartContext
-├── state: cart[]  (โหลดจาก localStorage ตอนเริ่ม)
+├── state: cart[]  (โหลดจาก localStorage key "calla-cart" ตอนเริ่ม)
 ├── useEffect → เขียนกลับ localStorage ทุกครั้งที่ cart เปลี่ยน
-├── addToCart(product)      → เพิ่มสินค้า (ถ้ามีอยู่แล้ว +qty)
-├── removeFromCart(id)      → ลบสินค้าออก
-├── increaseQty(id)         → เพิ่มจำนวน
-├── decreaseQty(id)         → ลดจำนวน (ขั้นต่ำ 1)
-├── clearCart()             → ล้างตะกร้า
-├── totalPrice              → ราคารวม (reduce)
-└── totalItemCount          → จำนวนสินค้าทั้งหมด (reduce)
+├── addToCart(product, qty=1)  → เพิ่มสินค้า (ถ้ามีอยู่แล้ว +qty)
+├── removeFromCart(id)         → ลบสินค้าออก
+├── increaseQty(id)            → เพิ่มจำนวน (+1)
+├── decreaseQty(id)            → ลดจำนวน (-1, ขั้นต่ำ 1)
+├── clearCart()                → ล้างตะกร้า (ใช้หลังสั่งซื้อ)
+├── itemCount                  → จำนวนสินค้าทั้งหมด (reduce quantity)
+└── totalPrice                 → ราคารวม (reduce price × quantity)
 ```
 
 Data shape ของ item ใน cart:
 
 ```
-{ id, name, price, image, qty }
+{ id, name, price, category, image, description, stock, createdAt, quantity }
 ```
 
-### AuthContext — การเข้าสู่ระบบ (Black, เฟสหลัง)
+> แต่ละ item คือ product object ทั้งก้อน spread แล้วต่อ `quantity`
+> `id` คือ MongoDB ObjectId (string) เช่น `"65f1c3a2..."`
+
+### AuthContext — การเข้าสู่ระบบ
 
 ```
 AuthContext
-├── state: user | null, token
-├── login(email, password)
-├── logout()
-└── isAuthenticated
+├── state: currentUser | null, token | null
+├── useEffect → บันทึก currentUser/token ลง localStorage อัตโนมัติ
+├── useEffect → ฟัง Event "calla:unauthorized" → logout อัตโนมัติ
+├── login(email, password)        → เรียก api.login()
+├── register(data)                → เรียก api.register()
+├── logout()                      → ล้าง user + token
+├── updateProfile(data)           → แก้ข้อมูลส่วนตัว
+├── changePassword(current, next) → เปลี่ยนรหัสผ่าน
+└── validatePassword(pw)          → export ตรวจความยาว 8-14 ตัว
+```
+
+### ProductContext — รายการสินค้า
+
+```
+ProductContext
+├── state: products[]  (โหลดจาก api.getProducts() ตอนเริ่ม)
+├── addProduct(data)      → api.createProduct() + ต่อท้ายลิสต์
+├── updateProduct(id, data) → api.updateProduct() + แทนที่ในลิสต์
+└── deleteProduct(id)     → api.deleteProduct() + กรองออก
 ```
 
 ---
 
-## 6. Data Model (สำหรับเฟส backend)
+## 6. Data Model
 
+### Product (MongoDB)
 ```
-Product   { id, name, price, category, image, description, stock }
-User      { id, name, email, password(hash), role: "customer" | "admin" }
-Order     { id, userId, items[], total, status }
+{ name, price, category, image, description, stock, createdAt, updatedAt }
+```
+- `id` = MongoDB `_id` (string) — เพิ่มโดย `toProductJSON()` ใน controller
+- `timestamps: true` → `createdAt`/`updatedAt` อัตโนมัติ
+
+### User (MongoDB)
+```
+{ name, email (unique), password (hash), role ("user"|"admin"),
+  phone, address, city, zip, memberSince, createdAt, updatedAt }
+```
+- `role` default = `"user"`, admin ตั้งค่าตอน seed
+- `password` เก็บเป็น bcrypt hash (ไม่ใช่รหัสจริง)
+
+### Order (MongoDB)
+```
+{ orderId (unique, "CL-xxxxxx"), userId (ref User, nullable),
+  items[]: { productId (ref Product), id, name, price, quantity, image },
+  customer: { fullName, email, phone, address, city, zip },
+  payment, subtotal, shipping, discount, total,
+  status ("processing"|"shipped"|"delivered"|"cancelled"),
+  createdAt, updatedAt }
 ```
 
-ตัวอย่าง:
-
-```js
-// Product
-{
-  id: 1,
-  name: "Lavender Dreams Soap",
-  price: 12.99,
-  category: "Relaxation",
-  image: "https://...",
-  description: "...",
-  stock: 50
-}
-
-// CartItem (ภายในตะกร้าผู้ใช้)
-{
-  productId: 1,
-  name: "Lavender Dreams Soap",
-  price: 12.99,
-  image: "https://...",
-  qty: 2
-}
+### CartItem (Frontend — localStorage)
 ```
+{ id, name, price, category, image, description, stock, createdAt, quantity }
+```
+- คือ product object ทั้งก้อน spread แล้วต่อ `quantity`
+- เก็บใน `localStorage` key `"calla-cart"`
 
 ---
 
-## 7. API Design (REST — เฟสอนาคต)
+## 7. API Design (REST)
 
 ### Products
 ```
-GET    /api/products          # รายการสินค้า
-GET    /api/products/:id      # สินค้าเดี่ยว
-POST   /api/products          # เพิ่มสินค้า (admin)
+GET    /api/products          # รายการสินค้าทั้งหมด (ไม่ต้องล็อกอิน)
+POST   /api/products          # เพิ่มสินค้า (admin เท่านั้น)
+GET    /api/products/:id      # สินค้ารายตัว
 PUT    /api/products/:id      # แก้ไขสินค้า (admin)
 DELETE /api/products/:id      # ลบสินค้า (admin)
 ```
 
-### Auth
+### Users (Auth)
 ```
-POST   /api/auth/register     # สมัครสมาชิก
-POST   /api/auth/login        # เข้าสู่ระบบ
+POST   /api/users/login       # เข้าสู่ระบบ (ไม่ต้องล็อกอิน)
+POST   /api/users/register    # สมัครสมาชิก (ไม่ต้องล็อกอิน)
+GET    /api/users              # รายชื่อผู้ใช้ทั้งหมด (admin)
+PUT    /api/users/:id/profile  # แก้โปรไฟล์ (เจ้าของหรือ admin)
+PUT    /api/users/:id/password # เปลี่ยนรหัสผ่าน (เจ้าของหรือ admin)
 ```
 
 ### Orders
 ```
-POST   /api/orders            # สร้างคำสั่งซื้อ
-GET    /api/orders/:id        # ดูคำสั่งซื้อ/สถานะ
-PUT    /api/orders/:id/status # เปลี่ยนสถานะ (admin)
+POST   /api/orders            # สร้างคำสั่งซื้อ (ต้องล็อกอิน)
+GET    /api/orders            # ออเดอร์ทั้งหมด (admin)
+GET    /api/orders/mine       # ออเดอร์ของตัวเอง (ต้องล็อกอิน)
+GET    /api/orders/track?q=   # เช็คสถานะ (ไม่ต้องล็อกอิน)
+GET    /api/orders/:id        # ดูออเดอร์ตาม id (เจ้าของหรือ admin)
+PATCH  /api/orders/:id        # เปลี่ยนสถานะ (admin)
 ```
 
 ---
 
-## 8. Feature พร้อมผู้รับผิดชอบ (Sprint 2)
+## 8. Feature สถานะปัจจุบัน
 
-| Feature | รายละเอียด | ทีม |
-|---------|-----------|-----|
-| Login / Register | หน้า + Auth state | Black |
-| Homepage | หน้าแรก | Black |
-| Tracking | หน้า + ProgressTracker | Bush |
-| Account | หน้าโปรไฟล์ผู้ใช้ | Bush |
-| Cart | CartContext + หน้าตะกร้า + localStorage | Toto |
-| Checkout | หน้า + สร้างคำสั่งซื้อ | Toto |
-| Products | ค้นหา/กรอง/เรียง + ProductCard | Phupha |
-| Product Detail | หน้ารายละเอียด | Phupha |
-| Admin | Dashboard / CRUD / Orders / Customers | Phupha |
+| Feature | สถานะ | รายละเอียด |
+|---------|-------|-----------|
+| Homepage | ✅ | Hero + Featured Products (3 ชิ้นแรก) |
+| Products | ✅ | ค้นหา/กรองหมวด/เรียง/pagination (9 ชิ้น/หน้า) |
+| Product Detail | ✅ | รายละเอียด + เลือกจำนวน + Add to Cart + สินค้าที่เกี่ยวข้อง |
+| Cart | ✅ | ตะกร้า + localStorage + ปรับจำนวน/ลบ |
+| Checkout | ✅ | ฟอร์มจัดส่ง + ชำระเงิน (COD/Transfer/Card) + สร้างออเดอร์ |
+| Order Success | ✅ | หน้ายืนยันหลังสั่งซื้อ |
+| Login / Register | ✅ | ฟอร์ม + JWT auth + validation |
+| Account | ✅ | โปรไฟล์ + แก้ไข + เปลี่ยนรหัสผ่าน + ประวัติออเดอร์ |
+| Tracking | ✅ | เช็คสถานะด้วย Order ID หรือ email |
+| Admin Dashboard | ✅ | สถิติ + Recent Orders |
+| Admin Products | ✅ | CRUD สินค้า (เพิ่ม/แก้ไข/ลบ) |
+| Admin Orders | ✅ | รายการออเดอร์ + เปลี่ยนสถานะ |
+| Admin Customers | ✅ | รายชื่อลูกค้า |
 
 ---
 
-## 9. จุดบกพร่องที่ควรแก้ (ตามสถานะปัจจุบัน)
+## 9. จุดที่ควรปรับปรุง
 
 | จุด | ปัญหา | วิธีแก้ |
 |-----|-------|--------|
-| CSS variables | `--color-primary` ฯลฯ ถูกใช้ แต่ **ไม่มีการนิยาม `:root`** → UI สีเพี้ยน | เพิ่มตัวแปรใน `index.css` |
-| `main.jsx` | import `StrictMode` แต่ไม่ใช้ | ครอบ `<StrictMode>` หรือลบ import |
-| Unused imports | `React` ใน Button/CartItem/ProductCard | ลบ import `React` |
-| Route ตัวพิมพ์ใหญ่ | `Navbar` ใช้ `/Product` | เปลี่ยนเป็น `/products` ให้ตรงกัน |
-| Home | ยังเป็น placeholder | พัฒนาตามงานของ Black |
+| CartItem → Product Detail | คลิกสินค้าในตะกร้าไม่ไปหน้ารายละเอียด | เพิ่ม `id` prop + `<Link>` ใน CartItem |
+| No .gitignore | ไม่มีไฟล์ .gitignore | เพิ่ม .gitignore (node_modules, .env, dist, docs) |
+| เวอร์ชัน docs | docs อาจไม่ sync กับโค้ด | อัปเดต docs ทุกครั้งที่เปลี่ยนโครงสร้าง |
 
 ---
 
-## 10. ขั้นตอนแนะนำต่อไป (ตามลำดับ)
+## 10. ขั้นตอนแนะนำต่อไป
 
-1. **ตั้งค่า CSS variables** ใน `index.css` (แก้สีเพี้ยนให้ทั่วโปรเจกต์)
-2. **ทำ CartContext + localStorage** แล้วครอบ `<CartProvider>` ใน `main.jsx`
-3. **เชื่อม Add to Cart** จาก ProductCard → Products → CartContext
-4. **สร้างหน้า Cart + Navbar badge**
-5. ต่อยอด: Checkout, Auth, Product Detail, Admin (ตาม Sprint)
+1. **CartItem → Product Detail**: ส่ง `id` prop ให้ CartItem แล้วครอบรูป/ชื่อด้วย
+   `<Link to={/product/${id}}>` เหมือน ProductCard
+2. **เพิ่ม .gitignore** เพื่อกัน node_modules / .env / dist / docs ไม่ให้ขึ้น git
+3. **ปรับปรุง Cart**: แสดง stock ที่เหลือ และเตือนเมื่อเกิน stock
+4. **ปรับปรุง Checkout**: รองรับ shipping fee / discount จริง
+5. เพิ่มฟีเจอร์: รีวิวสินค้า, คูปองส่วนลด, อัปโหลดรูปสินค้า

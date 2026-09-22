@@ -5,6 +5,7 @@ import productsRoute from './routes/productsRoute.js';
 import usersRoute from './routes/userRoute.js';
 import ordersRoute from './routes/orderRoute.js';
 import paymentsRoute from './routes/paymentRoute.js';
+import chatRoute from './routes/chatRoute.js';
 
 connectDB();
 
@@ -37,6 +38,7 @@ app.use('/api/products', productsRoute);
 app.use('/api/users', usersRoute);
 app.use('/api/orders', ordersRoute);
 app.use('/api/payments', paymentsRoute);
+app.use('/api/chat', chatRoute);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Calla Lilly API is running' });

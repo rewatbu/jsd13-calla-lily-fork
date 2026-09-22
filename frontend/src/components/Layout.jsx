@@ -6,6 +6,7 @@
 import { Outlet} from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import AIChat from "./AIChat";
 export default function Layout() {
   return (
     <div className="min-h-screen flex flex-col">
@@ -14,6 +15,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <Footer/>
+      <AIChat />
     </div>
   );
 }

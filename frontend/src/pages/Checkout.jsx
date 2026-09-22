@@ -5,7 +5,7 @@
 //   → ลด stock สินค้า → ล้างตะกร้า → ไปหน้า Order Success
 // ============================================================
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
@@ -17,9 +17,8 @@ const inputClass =
 const labelClass = "block text-sm font-semibold text-foreground mb-1";
 
 export default function Checkout() {
-  const { cart, totalPrice, clearCart } = useCart();
+  const { cart, totalPrice } = useCart();
   const { currentUser } = useAuth();
-  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     fullName: currentUser?.name || "",
@@ -28,9 +27,9 @@ export default function Checkout() {
     address: currentUser?.address || "",
     city: currentUser?.city || "",
     zip: currentUser?.zip || "",
-    payment: "COD",
   });
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // ต้องล็อกอินก่อนสั่งซื้อ (backend ใช้ JWT ยืนยันตัวตน)
   if (!currentUser) {
@@ -74,17 +73,16 @@ export default function Checkout() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  // ส่งคำสั่งซื้อเมื่อกด "Place Order"
-  //  1) ส่งข้อมูลคำสั่งซื้อไปยัง backend เพื่อบันทึกลง MongoDB
-  //     (backend ตรวจสอบ stock พร้อมลด stock ให้อัตโนมัติ)
-  //  2) ถ้าสำเร็จ => ล้างตะกร้าแล้วไปหน้า order-success พร้อมส่งข้อมูลออเดอร์ต่อ
-  //  3) ถ้า stock ไม่พอ => แสดงข้อความข้อผิดพลาดจาก backend
+  // กด "Pay with Card" => ส่งข้อมูลไปยัง backend เพื่อสร้าง Stripe Checkout Session
+  // แล้ว redirect ไปยังหน้าชำระเงินของ Stripe (ข้อมูลบัตรกรอกบนหน้า Stripe ไม่ใช่บนเว็บเรา)
+  // ออเดอร์จะถูกสร้างจริงตอนชำระเงินสำเร็จแล้วกลับมาที่ /payment-success
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
     try {
-      const order = await api.createOrder({
+      const { url } = await api.createCheckoutSession({
         userId: currentUser?.id || null,
         items: cart.map((item) => ({
           id: item.id,
@@ -101,17 +99,15 @@ export default function Checkout() {
           city: form.city,
           zip: form.zip,
         },
-        payment: form.payment,
         subtotal: totalPrice,
         shipping: 0,
         discount: 0,
         total: totalPrice,
       });
-
-      clearCart();
-      navigate("/order-success", { replace: true, state: { order } });
+      window.location.href = url;
     } catch (err) {
       setError(err.message);
+      setLoading(false);
     }
   }
 
@@ -215,22 +211,7 @@ export default function Checkout() {
                 placeholder="10110"
               />
             </div>
-            <div>
-              <label htmlFor="payment" className={labelClass}>
-                Payment method
-              </label>
-              <select
-                id="payment"
-                name="payment"
-                value={form.payment}
-                onChange={handleChange}
-                className={inputClass}
-              >
-                <option value="COD">Cash on Delivery</option>
-                <option value="transfer">Bank Transfer</option>
-                <option value="card">Credit / Debit Card</option>
-              </select>
-            </div>
+           
           </div>
         </div>
 
@@ -275,8 +256,9 @@ export default function Checkout() {
             </span>
           </div>
           <Button
-            name="Place Order"
+            name={loading ? "Redirecting to Stripe..." : "Pay with Card"}
             type="submit"
+            disabled={loading}
             className="w-full mt-5"
           />
           <Link

@@ -211,13 +211,7 @@ export default function Checkout() {
                 placeholder="10110"
               />
             </div>
-            <div className="sm:col-span-2">
-              <label className={labelClass}>Payment method</label>
-              <div className="border border-border rounded-lg px-4 py-3 bg-background text-muted-foreground text-sm">
-                Pay securely by credit / debit card. You'll be redirected to
-                Stripe's secure payment page to complete your purchase.
-              </div>
-            </div>
+           
           </div>
         </div>
 

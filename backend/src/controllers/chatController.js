@@ -1,7 +1,7 @@
 import Product from '../models/Product.js';
 
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
-const DEFAULT_MODEL = 'gemini-2.5-flash';
+const DEFAULT_MODEL = 'gemini-3.8-flash';
 const MAX_HISTORY_MESSAGES = 16;
 const MAX_MESSAGE_LENGTH = 2000;
 

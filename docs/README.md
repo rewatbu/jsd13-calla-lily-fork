@@ -101,7 +101,7 @@ npm run dev            # Vite dev server (proxy /api ไปที่ backend)
 
 ```env
 GEMINI_API_KEY=your-key
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.8-flash
 ```
 
 หน้าเว็บจะมีปุ่ม **AI ช่วยแนะนำ** ลอยที่มุมขวาล่าง และเรียก backend ที่ `POST /api/chat` เท่านั้น จึงไม่ส่ง API key ไปยัง browser

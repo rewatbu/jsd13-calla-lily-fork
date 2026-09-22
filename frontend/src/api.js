@@ -80,8 +80,8 @@ export const api = {
   getOrder: (id) => request(`/orders/${id}`),
   createOrder: (data) => request("/orders", { method: "POST", body: data }),
   updateOrderStatus: (id, status) => request(`/orders/${id}`, { method: "PATCH", body: { status } }),
-createCheckoutSession: (data) => request("/payments/checkout", { method: "POST", body: data }),
 
+  createCheckoutSession: (data) => request("/payments/checkout", { method: "POST", body: data }),
   chat: (messages) => request("/chat", { method: "POST", body: { messages } }),
 };
 

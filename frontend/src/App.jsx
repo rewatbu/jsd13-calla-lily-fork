@@ -20,6 +20,7 @@ import Account from "./pages/Account";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Tracking from "./pages/Tracking";
+import About from "./pages/About";
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
@@ -28,7 +29,7 @@ import AdminCustomers from "./pages/admin/AdminCustomers";
 
 // กำหนดโครงเส้นทาง (เส้นทางทั้งหมดภายใต้ Layout หลัก)
 // - / = Home, /product, /product/:id, /cart, /checkout,
-//   /order-success, /account, /login, /register, /tracking
+//   /order-success, /account, /login, /register, /tracking, /about
 // - /admin, /admin/products, /admin/orders, /admin/customers
 const router = createBrowserRouter([
   {
@@ -51,6 +52,7 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
       { path: "tracking", element: <Tracking /> },
+      { path: "about", element: <About /> },
       {
         path: "admin",
         element: <AdminLayout />,

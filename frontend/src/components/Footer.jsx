@@ -25,6 +25,9 @@ export default function Footer() {
           <Link to="/product?cat=Moisturizing" className={linkClass}>
             Moisturizing
           </Link>
+          <Link to="/about" className={linkClass}>
+            About Us
+          </Link>
         </div>
         <div className="flex flex-col p-5">
           <h3 className="font-semibold mb-2">Account</h3>

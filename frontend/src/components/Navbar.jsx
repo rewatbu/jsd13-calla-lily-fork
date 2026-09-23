@@ -1,6 +1,6 @@
 // ============================================================
 // Navbar: แถบเมนูด้านบน (ติดอยู่ด้านบนเสมอ)
-// - ซ้าย: โลโก้ + Home + Product (+ Admin ถ้าเป็นแอดมิน)
+// - ซ้าย: โลโก้ + Home + Product + About (+ Admin ถ้าเป็นแอดมิน)
 // - ขวา: คำทักทาย Logout, ไอคอนบัญชี, ตะกร้าพร้อมจำนวนสินค้า
 // ============================================================
 import { Link } from "react-router-dom";
@@ -28,6 +28,9 @@ export default function Navbar() {
         </Link>
         <Link to="/product" className={navLinkClass}>
           Product
+        </Link>
+        <Link to="/about" className={navLinkClass}>
+          About
         </Link>
         {currentUser?.role === "admin" && (
           <Link to="/admin" className={navLinkClass}>

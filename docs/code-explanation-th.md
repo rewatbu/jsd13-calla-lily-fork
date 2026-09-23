@@ -25,6 +25,8 @@
 15. [Backend — Routes (เส้นทาง API)](#backend--routes-เส้นทาง-api)
 16. [Backend — Controllers (ลอจิกของ API)](#backend--controllers-ลอจิกของ-api)
 17. [Backend — src/seed.js (เติมข้อมูลตั้งต้น)](#backend--srcseedjs-เติมข้อมูลตั้งต้น)
+18. [Backend — Payments (Stripe Checkout)](#backend--payments-stripe-checkout)
+19. [Backend — Calla AI (Chat + Gemini)](#backend--calla-ai-chat--gemini)
 
 ---
 
@@ -35,7 +37,7 @@ calla-lily-fullstack-1/
 ├─ backend/              # API server (Node.js + Express + MongoDB)
 │  └─ src/
 │     ├─ config/db.js    # เชื่อมต่อ MongoDB
-│     ├─ controllers/    # ลอจิกของ API (products/users/orders)
+│     ├─ controllers/    # ลอจิกของ API (products/users/orders/payments/chat)
 │     ├─ middlewares/    # ตรวจ JWT และสิทธิ์ admin
 │     ├─ models/         # โครงสร้างข้อมูล (Schema) ของ MongoDB
 │     ├─ routes/         # เส้นทาง URL ของ API
@@ -44,7 +46,7 @@ calla-lily-fullstack-1/
 └─ frontend/             # เว็บแอป (React + Vite + Tailwind)
    └─ src/
       ├─ api.js          # ฟังก์ชันเรียก API ทั้งหมด
-      ├─ components/     # UI ที่ใช้ซ้ำ (Navbar, Footer, Button, ...)
+      ├─ components/     # UI ที่ใช้ซ้ำ (Navbar, Footer, Button, AIChat, ...)
       ├─ context/        # state ร่วม (สินค้า/ตะกร้า/บัญชี)
       ├─ data/           # ข้อมูลตั้งต้น (seed) ของสมาชิก/admin
       ├─ pages/          # หน้าต่างๆ ของเว็บ
@@ -63,6 +65,19 @@ calla-lily-fullstack-1/
 5. Backend (`server.js`) รับ request → เข้า **Route** → **Middleware**
    (ตรวจ token ถ้าจำเป็น) → **Controller** อ่าน/เขียน **MongoDB** ผ่าน Model
 6. ส่งผลลัพธ์กลับเป็น JSON → หน้าแสดงผล
+
+**เส้นทางชำระเงิน (Stripe):**
+1. Checkout ส่ง `POST /api/payments/checkout` → backend สร้าง Stripe
+   Checkout Session แล้วคืน `{ url }` → หน้าเว็บ redirect ไปหน้า Stripe
+2. จ่ายเงินสำเร็จ Stripe redirect กลับมา `/payment-success?session_id=...`
+3. หน้า PaymentSuccess เรียก `createOrder({ sessionId, ... })` →
+   backend ตรวจ session กับ Stripe (`payment_status === 'paid'`) → สร้างออเดอร์
+   + ลด stock → ไปหน้า `/order-success`
+
+**เส้นทาง AI Chat (Calla AI):**
+1. ปุ่ม "AI ช่วยแนะนำ" (AIChat) ส่ง `POST /api/chat` ด้วยประวัติข้อความ
+2. backend เอารายการสินค้าจริงใน MongoDB มาสร้าง system instruction
+   แล้วส่งให้ Gemini → คืน `{ reply }` → แสดงเป็นฟองแชท
 
 > หมายเหตุ: คำขอที่ขึ้นต้นด้วย `/api` จะไป backend เสมอ ส่วนหน้าที่ไม่ต้อง
 > ใช้ข้อมูลจากเซิร์ฟเวอร์ (เช่น หน้า Home ที่มีรูป static) จะโหลดได้ทันที
@@ -122,7 +137,7 @@ calla-lily-fullstack-1/
 - สร้าง **Router** ด้วย `createBrowserRouter` — กำหนดเส้นทางทั้งหมด:
   - `/` → Home
   - `/product` → หน้ารายการสินค้า, `/product/:id` → รายละเอียดสินค้า
-  - `/cart`, `/checkout`, `/order-success`
+  - `/cart`, `/checkout`, `/order-success`, `/payment-success`
   - `/login`, `/register`, `/account`, `/tracking`
   - `/admin` + ลูก (`/admin/products`, `/admin/orders`, `/admin/customers`)
   - `errorElement` → ถ้าหาเส้นทางไม่เจอแสดง "Page not found"
@@ -176,6 +191,10 @@ const BASE = normalizeBase(import.meta.env.VITE_API_URL);
     `changePassword`
   - ออเดอร์: `getOrders`, `getMyOrders`, `trackOrder`, `getOrder`,
     `createOrder`, `updateOrderStatus`
+  - ชำระเงิน: `createCheckoutSession(data)` — POST `/payments/checkout`
+    คืน `{ url }` (ลิงก์หน้า Stripe) สำหรับ redirect
+  - แชท: `chat(messages)` — POST `/chat` ส่งประวัติข้อความไป Gemini
+    คืน `{ reply }` (ตอบของ Calla AI)
 - `sortOrdersNewest(orders)` — เรียงออเดอร์ใหม่ก่อนโดยใช้ `date`
 
 ---
@@ -233,7 +252,7 @@ export Hook `useXxx()` ที่ใช้เรียกจากหน้าไ
 
 ### `src/components/Layout.jsx`
 - โครงหน้าเว็บ: `Navbar` (บน) + พื้นที่ของแต่ละหน้า `<Outlet />` (กลาง)
-  + `Footer` (ล่าง)
+  + `Footer` (ล่าง) + `<AIChat />` (ปุ่มลอย AI ช่วยแนะนำมุมขวาล่าง)
 - พื้นหลังของเนื้อหาเป็นสีครีม `#FFE5DE`
 
 ### `src/components/Navbar.jsx`
@@ -263,6 +282,16 @@ export Hook `useXxx()` ที่ใช้เรียกจากหน้าไ
 - รับ props: `name, price, image, quantity` + callbacks
   `onIncrease / onDecrease / onRemove`
 - คำนวณ `itemTotal = price × quantity` แสดงเป็นราคารวมของชิ้นนั้น
+- คลิกรูป/ชื่อ → ไปหน้า `/product/{id}` (มี `Link`)
+
+### `src/components/AIChat.jsx`
+- ปุ่มลอย "AI ช่วยแนะนำ" (bottom-right) ที่มีในทุกหน้า ผ่าน `<AIChat />`
+  ใน Layout
+- เปิด/ปิดกล่องแชท (max-height, scroll), มีข้อความต้อนรับจาก "Calla AI"
+- กดส่ง → ใช้ `api.chat(nextMessages)` ส่งประวัติทั้งชุดให้ backend `/api/chat`
+  → แสดงคำตอบ `{ reply }` เป็นฟองแชทฝั่ง AI
+- ระหว่างรอแสดง "Calla AI กำลังพิมพ์..."; มี error handling
+  (แต่ละข้อความจำกัด 2000 ตัวอักษรตรง input)
 
 ---
 
@@ -302,18 +331,27 @@ export Hook `useXxx()` ที่ใช้เรียกจากหน้าไ
 - หน้าชำระเงิน: ฟอร์มข้อมูลจัดส่ง (pre-fill จาก `currentUser` ถ้าล็อกอิน)
 - ต้องล็อกอินก่อน (ไม่ล็อกอิน → แสดงปุ่ม Log In/Register)
   และต้องมีสินค้าในตะกร้า
-- เลือกวิธีชำระเงิน: COD / Bank Transfer / Card
-- กด "Place Order" → `handleSubmit`:
-  1. `api.createOrder({...})` ส่งให้ backend บันทึกลง MongoDB
-     (backend ตรวจ stock และลด stock ให้อัตโนมัติ)
-  2. สำเร็จ → `clearCart()` แล้วไป `/order-success` พร้อมส่งออเดอร์ผ่าน
-     `location.state`
+- จ่ายเงินด้วยบัตรผ่าน **Stripe Checkout**:
+  1. กด "Pay with Card" → `handleSubmit` เรียก `api.createCheckoutSession({...})`
+     ซึ่ง backend จะเช็ค stock + สร้าง Stripe Checkout Session แล้วคืน `{ url }`
+  2. สำเร็จ → `window.location.href = url` (redirect ไปหน้า Stripe ให้ลูกค้ากรอก
+     ข้อมูลบัตรบนหน้า Stripe — ไม่มีเลขบัตรบนเว็บเรา)
   3. ล้มเหลว → แสดง `err.message` (เช่น stock ไม่พอ)
+- ยังไม่ `clearCart()` ตรงนี้ — จะล้างตอนยืนยันสำเร็จแล้วที่หน้า payment-success
 
 ### `src/pages/OrderSuccess.jsx` (/order-success)
 - หน้าขอบคุณหลังสั่งซื้อ อ่านออเดอร์จาก `location.state?.order`
 - ถ้าไม่มีออเดอร์ (เช่นกด URL ตรงๆ) → แสดง "No order found"
 - แสดง: order id, วันที่, สรุปรายการสินค้า, ค่าขนส่ง (Free), ยอดรวม
+
+### `src/pages/PaymentSuccess.jsx` (/payment-success)
+- Stripe redirect กลับมาที่หน้านี้พร้อม `?session_id=...`
+- `useEffect` (รันครั้งเดียว) → เรียก `api.createOrder({ sessionId, cart, customer })`
+  - backend ตรวจ session กับ Stripe (`payment_status === 'paid'` + ยอดตรงกัน)
+  - ออเดอร์ถูกสร้าง + ลด stock → สำเร็จ → `clearCart()` แล้ว
+    `navigate("/order-success", { state: { order } })`
+- เช็คซ้ำด้วย `stripeSessionId` (refresh หน้าไม่สร้างออเดอร์ซ้ำ)
+- ถ้าไม่มี `session_id` → "No payment found"; ถ้า error → "Payment not confirmed"
 
 ### `src/pages/Login.jsx` (/login)
 - ฟอร์ม email + password → `handleSubmit` เรียก `login()`
@@ -410,7 +448,7 @@ export Hook `useXxx()` ที่ใช้เรียกจากหน้าไ
 - scripts: `dev` (รันด้วย `--watch`), `start`, `seed` (เติมข้อมูล),
   `data:destroy` (ล้างข้อมูล)
 - dependencies: `express`, `mongoose`, `bcryptjs` (เข้ารหัสรหัสผ่าน),
-  `jsonwebtoken` (สร้าง/ตรวจ JWT), `cors`
+  `jsonwebtoken` (สร้าง/ตรวจ JWT), `cors`, `stripe` (ชำระเงิน)
 
 ---
 
@@ -427,6 +465,8 @@ export Hook `useXxx()` ที่ใช้เรียกจากหน้าไ
   - `/api/products` → productsRoute
   - `/api/users` → usersRoute
   - `/api/orders` → ordersRoute
+  - `/api/payments` → paymentsRoute (Stripe checkout)
+  - `/api/chat` → chatRoute (Calla AI)
 - เส้นทาง `/` → ตอบ `{ message: "Calla Lilly API is running" }`
   (ไว้เช็คว่าเซิร์ฟเวอร์ยังทำงานอยู่)
 
@@ -456,7 +496,9 @@ export Hook `useXxx()` ที่ใช้เรียกจากหน้าไ
   - `items[]` — แต่ละชิ้น: `productId` (อ้างอิง Product), `id`,
     `name`, `price`, `quantity` (min 1), `image`
   - `customer` — `fullName, email, phone, address, city, zip`
-  - `payment` (default "COD")
+  - `payment` (default "COD" / `"card"` เมื่อจ่ายด้วย Stripe)
+  - `stripeSessionId` (default null — เก็บ Stripe session id กันออเดอร์ซ้ำ)
+  - `shippingAddress` (ข้อมูลจัดส่งจาก Stripe session)
   - `subtotal, shipping, discount, total`
   - `status` — enum `pending/confirmed/processing/shipped/delivered/cancelled`
     (default "processing")
@@ -504,6 +546,14 @@ export Hook `useXxx()` ที่ใช้เรียกจากหน้าไ
 - `GET /api/orders/:id` — ดูออเดอร์ตาม id (เจ้าของหรือ admin)
 - `PATCH /api/orders/:id` — เปลี่ยนสถานะ (**admin**)
 
+### `src/routes/paymentRoute.js`
+- `POST /api/payments/checkout` — สร้าง Stripe Checkout Session
+  (**ต้องล็อกอิน**) → คืน `{ url }` สำหรับ redirect ไปหน้า Stripe
+
+### `src/routes/chatRoute.js`
+- `POST /api/chat` — ส่งข้อความไปยัง Gemini (Calla AI)
+  รับ `{ messages: [{ role, text }] }` → คืน `{ reply }` (ไม่ต้องล็อกอิน)
+
 ---
 
 ## Backend — Controllers (ลอจิกของ API)
@@ -544,8 +594,13 @@ export Hook `useXxx()` ที่ใช้เรียกจากหน้าไ
   - ตะกร้าไม่ว่าง, ข้อมูลลูกค้ามีครบ
   - ทุก item: ตรวจว่าสินค้ามีจริง และ `stock` พอ (ไม่พอ → 400 พร้อมบอก
     ชื่อ + จำนวนที่มี)
+  - ถ้ามี `sessionId` (จ่ายด้วย Stripe): ตรวจว่า `stripeSessionId` ยัง
+    ไม่เคยถูกใช้สร้างออเดอร์ (กันซ้ำตอน refresh) → retrieve session กับ
+    Stripe → ต้อง `payment_status === 'paid'` และ `total` ตรงกับยอดจริง
+    ที่จ่าย (ไม่รับยอดจาก client ตรงๆ) → ใช้ข้อมูลจัดส่งจาก
+    `session.metadata.shipping`
   - สร้าง `orderId` เป็น `CL-` + 6 หลักสุดท้ายของ timestamp (หรือใช้
-    ที่ส่งมา)
+    ที่ส่งมา) และ `payment = "card"` ถ้ามี `sessionId`
   - ตัด stock: `Product.findByIdAndUpdate($inc: { stock: -qty })`
 - `updateOrderStatus` — หาออเดอร์แล้วเปลี่ยน `status` (บันทึกเป็น
   lowercase) แล้วตอบ JSON กลับ
@@ -568,6 +623,57 @@ export Hook `useXxx()` ที่ใช้เรียกจากหน้าไ
 
 ---
 
+## Backend — Payments (Stripe Checkout)
+
+### `src/controllers/paymentController.js`
+- init Stripe instance ด้วย `process.env.STRIPE_SECRET_KEY`
+- `createCheckoutSession(req, res)`:
+  - ตรวจว่าตะกร้าไม่ว่าง + ข้อมูลจัดส่งครบ (fullName/email) → ไม่งั้น 400
+  - ทุก item: หาสินค้าใน DB ด้วย `new mongoose.Types.ObjectId(item.id)` →
+    ตรวจว่ามีสินค้าจริง และ `stock` พอ (`product.stock >= quantity`)
+  - แปลงเป็น `line_items` สำหรับ Stripe: currency `thb`,
+    `unit_amount = Math.round(price * 100)` (บาท → satang), รูปสินค้า
+  - คำนวณยอด: `subtotal + shipping − discount`; ต้อง > 0
+  - `stripe.checkout.sessions.create({ mode: 'payment', customer_email,
+    metadata: { shipping: JSON.stringify(customer) }, success_url:
+    "<CLIENT_URL>/payment-success?session_id={CHECKOUT_SESSION_ID}",
+    cancel_url: "<CLIENT_URL>/checkout" })`
+  - คืน `{ url }` → ฝั่ง frontend `window.location.href = url`
+
+### `src/routes/paymentRoute.js`
+- `POST /checkout` → เรียก `createCheckoutSession` โดยผ่าน
+  `requireAuth` ก่อน (ต้องล็อกอิน)
+
+---
+
+## Backend — Calla AI (Chat + Gemini)
+
+### `src/controllers/chatController.js`
+- ตัวแปร: `GEMINI_API_URL` (generativelanguage.googleapis.com),
+  `DEFAULT_MODEL = "gemini-3.8-flash"` (หรือ `GEMINI_MODEL` จาก env),
+  เก็บประวัติได้สูงสุด 16 ข้อความ, ข้อความละ ≤ 2000 ตัว
+- `buildSystemInstruction(products)` — สร้าง system instruction ที่บอก
+  Gemini ว่าเป็น "Calla AI" ผู้ช่วยของร้าน ตอบเป็นภาษาไทย ใช้ข้อมูลสินค้าจริง
+  (ชื่อ/หมวด/ราคา/สต็อก/คำอธิบาย) ที่อ่านจาก MongoDB เป็นแหล่งเดียว
+- `getClientMessages(messages)` — กรองประวัติให้เริ่มต้นด้วยฝั่งผู้ใช้
+  + ตัดเกิน max length + เปลี่ยนเป็น `{ role, parts: [{ text }] }`
+- `chat(req, res)`:
+  - ไม่มี `GEMINI_API_KEY` → 503 (แจ้งว่า config ไม่ครบ)
+  - ตรวจว่ามีข้อความผู้ใช้จริง → ไม่งั้น 400
+  - ตั้ง timeout 25 วินาที (`AbortController`)
+  - อ่านสินค้าจริงจาก DB (แค่ field ที่จำเป็น ไม่แก้สต็อก)
+  - `fetch` ไป `/{model}:generateContent` พร้อม `x-goog-api-key`
+    (key อยู่ฝั่ง backend เท่านั้น ไม่เข้า browser)
+  - ตัดคำตอบจาก `candidates[0].content.parts` → คืน `{ reply }`
+  - จัดการ error: 429 (AI ยุ่ง → แนะนำลองใหม่), 502/504 (บริการล่ม)
+
+### `src/routes/chatRoute.js`
+- `POST /api/chat` → เรียก `chat` (ไม่ต้องล็อกอิน)
+
+> การตั้งค่า: `GEMINI_API_KEY`, `GEMINI_MODEL` (จาก [Google AI Studio](https://aistudio.google.com/app/apikey)) ใส่ใน `backend/.env`
+
+---
+
 ## สรุปสาเหตุที่เคยเจอ "No products found" (บทเรียนจากบั๊ก)
 
 - หน้าสินค้าอ่านข้อมูลจาก `useProducts()` → `api.getProducts()` →
@@ -584,4 +690,4 @@ export Hook `useXxx()` ที่ใช้เรียกจากหน้าไ
 ---
 
 *เอกสารนี้เขียนจากโค้ดจริงในโปรเจกต์ (อัปเดตล่าสุดตามโค้ดปัจจุบัน —
-  แก้คำอธิบาย `vite.config.js` / `package.json` ให้ตรงกับโค้ดจริง)*
+  ครอบคลุม Stripe Payments + Calla AI Chat และไฟล์/โครงสร้างที่เพิ่มเข้ามาใน Sprint 3)*

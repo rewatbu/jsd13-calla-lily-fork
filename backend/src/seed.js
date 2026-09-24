@@ -6,6 +6,7 @@ import Order from './models/order.model.js';
 import products from '../../frontend/src/data/products.js';
 import seedUser from '../../frontend/src/data/user.js';
 import adminUser from '../../frontend/src/data/admin.js';
+import connectDB from './config/db.js';
 
 const clean = async () => {
   await Product.deleteMany({});
@@ -42,7 +43,7 @@ const destroy = async () => {
 
 const run = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await connectDB();
     if (process.argv.includes('--destroy')) {
       await destroy();
     } else {

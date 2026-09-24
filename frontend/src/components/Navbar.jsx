@@ -1,6 +1,6 @@
 // ============================================================
 // Navbar: แถบเมนูด้านบน (ติดอยู่ด้านบนเสมอ)
-// - ซ้าย: โลโก้ + Home + Product (+ Admin ถ้าเป็นแอดมิน)
+// - ซ้าย: โลโก้ + Home + Product + About (+ Admin ถ้าเป็นแอดมิน)
 // - ขวา: คำทักทาย Logout, ไอคอนบัญชี, ตะกร้าพร้อมจำนวนสินค้า
 // ============================================================
 import { Link } from "react-router-dom";
@@ -14,6 +14,7 @@ export default function Navbar() {
   const navLinkClass =
     "px-3 sm:px-6 h-full flex items-center font-semibold text-primary hover:bg-primary/10 transition-colors duration-300";
 
+  // 
   return (
     <div className="flex w-full h-16 bg-surface justify-between items-center sticky top-0 z-50 shadow-md">
       <div className="flex items-center h-full">
@@ -28,6 +29,9 @@ export default function Navbar() {
         </Link>
         <Link to="/product" className={navLinkClass}>
           Product
+        </Link>
+        <Link to="/about" className={navLinkClass}>
+          About
         </Link>
         {currentUser?.role === "admin" && (
           <Link to="/admin" className={navLinkClass}>
@@ -69,31 +73,53 @@ export default function Navbar() {
             />
           </svg>
         </Link>
-        <Link
-          to="/cart"
-          aria-label="Shopping cart"
-          className="relative mr-3 sm:mr-6 h-11 w-11 flex items-center justify-center rounded-lg text-primary hover:bg-primary/10 transition-colors duration-300"
-        >
-        <svg
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={1.8}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-          />
-        </svg>
-        {itemCount > 0 && (
-          <span className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-primary text-surface text-xs font-bold flex items-center justify-center">
-            {itemCount}
-          </span>
-        )}
-        </Link>
-      </div>
+      )}
     </div>
-  );
+
+    {/* Centered logo */}
+    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+      <img
+        src="/logo-calla-lily2.png"
+        alt="logo"
+        className="h-16 w-16 object-cover rounded"
+      />
+    </div>
+
+    {/* Right */}
+    <div className="flex items-center h-full">
+      {currentUser && (
+        <>
+          <span className="hidden sm:inline text-sm font-semibold text-primary mr-2">
+            Hi, {currentUser.name.split(" ")[0]}
+          </span>
+
+          <button
+            type="button"
+            onClick={logout}
+            className="h-11 px-3 flex items-center rounded-lg text-sm font-semibold text-primary hover:bg-primary/10 transition-colors duration-300 cursor-pointer"
+          >
+            Logout
+          </button>
+        </>
+      )}
+
+      <Link
+        to={currentUser ? "/account" : "/login"}
+        aria-label="My Account"
+        className="h-11 w-11 flex items-center justify-center rounded-lg text-primary hover:bg-primary/10 transition-colors duration-300"
+      >
+        {/* account SVG */}
+      </Link>
+
+      <Link
+        to="/cart"
+        aria-label="Shopping cart"
+        className="relative mr-3 sm:mr-6 h-11 w-11 flex items-center justify-center rounded-lg text-primary hover:bg-primary/10 transition-colors duration-300"
+      >
+        {/* cart SVG */}
+      </Link>
+    </div>
+  </div>
+);
+
 }

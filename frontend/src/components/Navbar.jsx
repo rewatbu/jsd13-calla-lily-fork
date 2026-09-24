@@ -16,7 +16,7 @@ export default function Navbar() {
 
   // 
   return (
-  <div className="relative flex w-full h-16 bg-surface justify-between items-center sticky top-0 z-50 shadow-md">
+  <div className="relative flex w-full h-18 bg-surface justify-between items-center sticky top-0 z-50 shadow-md">
     {/* Left */}
     <div className="flex items-center h-full">
       <Link
@@ -44,7 +44,7 @@ export default function Navbar() {
     {/* Centered logo */}
     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
       <img
-        src="/logo-calla-lily1.jpg"
+        src="/logo-calla-lily2.png"
         alt="logo"
         className="h-16 w-16 object-cover rounded"
       />

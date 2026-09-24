@@ -1,6 +1,6 @@
 // ============================================================
 // Navbar: แถบเมนูด้านบน (ติดอยู่ด้านบนเสมอ)
-// - ซ้าย: โลโก้ + Home + Product (+ Admin ถ้าเป็นแอดมิน)
+// - ซ้าย: โลโก้ + Home + Product + About (+ Admin ถ้าเป็นแอดมิน)
 // - ขวา: คำทักทาย Logout, ไอคอนบัญชี, ตะกร้าพร้อมจำนวนสินค้า
 // ============================================================
 import { Link } from "react-router-dom";
@@ -16,27 +16,62 @@ export default function Navbar() {
 
   // 
   return (
-  <div className="relative flex w-full h-18 bg-surface justify-between items-center sticky top-0 z-50 shadow-md">
-    {/* Left */}
-    <div className="flex items-center h-full">
-      <Link
-        to="/"
-        className="p-4 font-bold text-lg tracking-wide text-primary"
-      >
-        Calla Lily
-      </Link>
-
-      <Link to="/" className={navLinkClass}>
-        Home
-      </Link>
-
-      <Link to="/product" className={navLinkClass}>
-        Product
-      </Link>
-
-      {currentUser?.role === "admin" && (
-        <Link to="/admin" className={navLinkClass}>
-          Admin
+    <div className="flex w-full h-16 bg-surface justify-between items-center sticky top-0 z-50 shadow-md">
+      <div className="flex items-center h-full">
+        <Link
+          to="/"
+          className="p-4 font-bold text-lg tracking-wide text-primary"
+        >
+          Calla Lily
+        </Link>
+        <Link to="/" className={navLinkClass}>
+          Home
+        </Link>
+        <Link to="/product" className={navLinkClass}>
+          Product
+        </Link>
+        <Link to="/about" className={navLinkClass}>
+          About
+        </Link>
+        {currentUser?.role === "admin" && (
+          <Link to="/admin" className={navLinkClass}>
+            Admin
+          </Link>
+        )}
+      </div>
+      <div className="flex items-center h-full">
+        {currentUser && (
+          <>
+            <span className="hidden sm:inline text-sm font-semibold text-primary mr-2">
+              Hi, {currentUser.name.split(" ")[0]}
+            </span>
+            <button
+              type="button"
+              onClick={logout}
+              className="h-11 px-3 flex items-center rounded-lg text-sm font-semibold text-primary hover:bg-primary/10 transition-colors duration-300 cursor-pointer"
+            >
+              Logout
+            </button>
+          </>
+        )}
+        <Link
+          to={currentUser ? "/account" : "/login"}
+          aria-label="My Account"
+          className="h-11 w-11 flex items-center justify-center rounded-lg text-primary hover:bg-primary/10 transition-colors duration-300"
+        >
+          <svg
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.8}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+            />
+          </svg>
         </Link>
       )}
     </div>

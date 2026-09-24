@@ -23,6 +23,17 @@
   --color-danger: #991b1b;
   --color-danger-soft: #fee2e2;
 
+  /* Vibrant accents used on the About page to break away from the
+     calm main theme. Kept as tokens so JSX stays free of raw hex. */
+  --color-vibrant-amber: #f59e0b;
+  --color-vibrant-orange: #fb923c;
+  --color-vibrant-rose: #f43f5e;
+  --color-vibrant-violet: #8b5cf6;
+  --color-vibrant-fuchsia: #d946ef;
+  --color-vibrant-teal: #14b8a6;
+  --color-vibrant-sky: #0ea5e9;
+  --color-vibrant-lime: #84cc16;
+
   --shadow-brand-sm: 0 1px 3px rgb(155 21 29 / 0.12);
   --shadow-brand-md: 0 6px 18px rgb(155 21 29 / 0.18);
   --shadow-button-hover: 0 5px 14px rgb(155 21 29 / 0.22);

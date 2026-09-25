@@ -13,7 +13,7 @@ export default function Home() {
   const { addToCart } = useCart();
   const { products } = useProducts();
   // เลือก 3 สินค้าแรกมาโชว์เป็น "Featured"
-  const featured = products.slice(0, 3);
+  const featured = products.slice(0, 6);
 
   return (
     <div>

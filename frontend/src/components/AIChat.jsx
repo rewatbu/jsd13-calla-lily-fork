@@ -113,7 +113,7 @@ export default function AIChat() {
         onClick={isOpen ? () => setIsOpen(false) : openChat}
         aria-label={isOpen ? "Close AI chat" : "Open AI chat"}
         aria-expanded={isOpen}
-        className="ml-auto flex h-14 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-background shadow-brand-md transition-all hover:-translate-y-0.5 hover:bg-primary-hover focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-border"
+        className="ml-auto flex h-14 items-center gap-2 rounded-full bg-muted-foreground px-5 text-sm font-bold text-background shadow-brand-md transition-all hover:-translate-y-0.5 hover:bg-primary-hover focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-border"
       >
         <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 0 1-4.4-1.04L3 20l1.3-3.25A7.6 7.6 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8Z" />

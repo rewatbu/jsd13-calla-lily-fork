@@ -20,7 +20,7 @@ export default function ProductCard({ product, onAddToCart }) {
           {category}
         </span>
         <Link to={`/product/${id}`}>
-          <h2 className="font-semibold text-foreground hover:text-primary transition-colors duration-300 leading-snug">
+          <h2 className="font-semibold text-xl text-foreground hover:text-primary transition-colors duration-300 leading-snug">
             {name}
           </h2>
         </Link>

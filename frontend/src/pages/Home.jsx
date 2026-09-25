@@ -74,7 +74,7 @@ export default function Home() {
             />
           ))}
         </div>
-        <div className="text-primary hover:underline justify-self-center m-8">
+        <div className="font-semibold text-primary hover:underline justify-self-center m-8 cursor-pointer">
           View all products →
         </div>
       </section>

@@ -66,13 +66,13 @@ export default function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featured.map((product) => (
+          { featured.length > 0 ? featured.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
               onAddToCart={() => addToCart(product)}
             />
-          ))}
+          )) : "Loading..." }
         </div>
         <div className="font-semibold text-primary hover:underline justify-self-center m-8 cursor-pointer">
           View all products →

@@ -13,6 +13,7 @@ const ProductContext = createContext(null);
 // Provider สินค้า: โหลดสินค้าจาก MongoDB เมื่อเริ่มแอป
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true); // the state to show "Loading..." while waiting the fetched products, not yet set it in useEffect
 
   useEffect(() => {
     api

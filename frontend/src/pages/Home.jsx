@@ -74,6 +74,9 @@ export default function Home() {
             />
           ))}
         </div>
+        <div className="text-primary hover:underline justify-self-center m-8">
+          View all products →
+        </div>
       </section>
     </div>
   );
